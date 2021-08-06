@@ -18,7 +18,7 @@ class Pacman:
                              self.app.scaleImage(self.app.loadImage('SpriteSheet.png').crop((127, 91, 140, 104)), 2.8)
                             ]
         cellWidth = app.width/21
-        self.center = (((pos[1]-0.5) * cellWidth, (pos[0] - 0.5) * cellWidth))
+        self.center = (((pos[1]+0.5) * cellWidth, (pos[0] + 0.5) * cellWidth))
         self.speed = 12
     def nextSprite(self):
         self.spriteCount = (self.spriteCount + 1)%2
@@ -47,7 +47,4 @@ class Pacman:
         if self.app.board[newPos[0]][newPos[1]] != "X":
             self.center = (self.center[0] + dx, self.center[1] + dy)
             self.pos = self.getPos(self.center)
-            self.spriteCount = (self.spriteCount + 1)%2
-        else:
-            print(dx, dy)
-            #print(self.app.board[self.pos[0] + dy][self.pos[1] + dx])
+            self.nextSprite()

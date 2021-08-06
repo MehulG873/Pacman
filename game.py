@@ -1,8 +1,9 @@
 from cmu_112_graphics import *
 from pacman import Pacman
+from ghost import *
 
 def appStarted(app):
-    app.background = app.scaleImage(app.loadImage(
+    app.background = app.  scaleImage(app.loadImage(
         'SpriteSheet.png').crop((370, 3, 536, 216)), 3.5)
     app.dot = app.scaleImage(app.loadImage(
         'SpriteSheet.png').crop((3, 81, 5, 83)), 3.5)
@@ -10,6 +11,10 @@ def appStarted(app):
         'SpriteSheet.png').crop((5, 81, 7, 83)), 3.5)
     app.pacman = Pacman(app, (21, 11))
     app.pacmanImg = app.pacman.getImg()
+    app.ghost = basicGhost(app, (10, 10))
+    app.ghostImg = app.ghost.getImg()
+    app.timerDelay = 20
+
     app.board = [["X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X"],
                  ["X", " ", " ", " ", " ", " ", " ", " ", " ", " ", "X", " ", " ", " ", " ", " ", " ", " ", " ", " ", "X"],
                  ["X", " ", "X", "X", "X", " ", "X", "X", "X", " ", "X", " ", "X", "X", "X", " ", "X", "X", "X", " ", "X"],
@@ -46,15 +51,17 @@ def keyPressed(app, event):
     elif (event.key == "Left"):
         app.pacman.changeDir(1)
     elif (event.key == "Right"):
-        app.pacman.changeDir(0)
+        app.pacman.changeDir(0)  
 
 
 def timerFired(app):
     app.pacmanImg = app.pacman.getImg()
+    app.ghostImg = app.ghost.getImg()
+    app.ghost.nextSprite()
     #app.pacman.nextSprite()
     app.pacman.move()
     app.board[app.pacman.pos[0]][app.pacman.pos[1]] = "O"
-    print(app.pacman.speed)
+    app.ghost.move()
 
 def getCenter(app, pos):
     cellWidth = app.width/21
@@ -68,7 +75,9 @@ def redrawAll(app, canvas):
     #drawPacman
     x,y = app.pacman.center
     canvas.create_image(x, y, image = ImageTk.PhotoImage(app.pacmanImg), anchor = "c")
-
+    x,y = app.ghost.center
+    canvas.create_image(x, y, image = ImageTk.PhotoImage(app.ghostImg), anchor = "c")
+   
 def drawDots(app, canvas):
     for row in range(len(app.board)):
         for col in range(len(app.board[row])):
