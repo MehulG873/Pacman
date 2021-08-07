@@ -89,11 +89,7 @@ def drawDots(app, canvas):
     for row in range(len(app.board)):
         for col in range(len(app.board[row])):
             if (app.board[row][col] == " "):
-                canvas.create_image(
-                    7 + (28 * col), 7 + (28 * row), image=ImageTk.PhotoImage(app.dot), anchor="nw")
-            elif (app.board[row][col] == "O"):
-                canvas.create_image(
-                    7 + (28 * col), 7 + (28 * row), image=ImageTk.PhotoImage(app.blank), anchor="nw")
+                canvas.create_rectangle(7 + (28 * col), 7 + (28 * row), 15 + (28 * col), 15 + (28 * row), fill = "white")
 
 def drawGhosts(app, canvas):
     for i in range(len(app.ghosts)):
