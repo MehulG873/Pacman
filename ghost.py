@@ -42,7 +42,7 @@ class Ghost:
         newPos = self.getPos((self.center[0] + dx, self.center[1] + dy))
         if self.app.board[newPos[0]][newPos[1]] != "X":
             self.center = (self.center[0] + dx, self.center[1] + dy)
-            if self.getPos(self.center) != self.pos:
+            if self.getPos(self.center) != self  .pos:
                 self.previousMoves.append(self.getPos(self.center))
                 if (len(self.previousMoves) > 5):
                     self.previousMoves.pop(0)
