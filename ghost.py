@@ -1,6 +1,9 @@
 from cmu_112_graphics import *
 from PIL import Image
-import random, copy, time
+import random
+import copy
+import time
+
 
 class Ghost:
     def __init__(self, app, pos, color):
@@ -11,15 +14,19 @@ class Ghost:
         self.color = color
         self.spriteCount = 0
         self.spriteImages = [
-                             self.app.scaleImage(self.app.loadImage('SpriteSheet.png').crop((3 + 17 *i, 125 + 18 * color, 17 + 17*i, 138 + 18 * color)), 2.8) for i in range(8)
-                            ]
+            self.app.scaleImage(self.app.loadImage('SpriteSheet.png').crop(
+                (3 + 17 * i, 125 + 18 * color, 17 + 17*i, 138 + 18 * color)),
+                2.8) for i in range(8)
+        ]
         cellWidth = app.width/21
         self.center = (((pos[1]+0.5) * cellWidth, (pos[0] + 0.5) * cellWidth))
         self.speed = 7 + color
         self.previousMoves = []
-        self.app.scared = self.app.scaleImage(self.app.loadImage('SpriteSheet.png').crop((3, 125 + 18 * 4, 17, 138 + 18 * 4)), 2.8)
+        self.app.scared = self.app.scaleImage(self.app.loadImage(
+            'SpriteSheet.png').crop((3, 125 + 18 * 4, 17, 138 + 18 * 4)), 2.8)
+
     def nextSprite(self):
-        self.spriteCount = (self.spriteCount + 1)%2
+        self.spriteCount = (self.spriteCount + 1) % 2
 
     def getImg(self):
         if self.app.powered:
@@ -28,15 +35,16 @@ class Ghost:
             return self.spriteImages[(2 * self.dir) + self.spriteCount]
 
     def getPos(self, cord):
-        row = round((cord[1]-7)/28) 
+        row = round((cord[1]-7)/28)
         col = round((cord[0]-7)/28)
         return row, col
+
     def changeDir(self, newDir):
         self.dir = newDir
 
     def move(self):
         self.evaluateDirection()
-        dx, dy = 0,0
+        dx, dy = 0, 0
         if self.dir == 0:
             dx = self.speed
         elif self.dir == 1:
@@ -49,7 +57,9 @@ class Ghost:
         if newPos[1] < 0 or newPos[1] >= len(self.app.board[0]):
             newPos = (newPos[0], ((len(self.app.board[0]) - 1) - newPos[1]))
             cellWidth = self.app.width/21
-            self.center = (((self.newPos[1]+0.5) * cellWidth, (self.newPos[0] + 0.5) * cellWidth))
+            self.center = (
+                ((self.newPos[1]+0.5) * cellWidth,
+                 (self.newPos[0] + 0.5) * cellWidth))
             self.pos = copy.copy(newPos)
             print(self.pos)
             time.sleep(2)
@@ -62,8 +72,10 @@ class Ghost:
                     self.previousMoves.pop(0)
             self.pos = self.getPos(self.center)
             self.nextSprite()
+
     def evaluateDirection(self):
         self.changeDir(random.randint(0, 3))
+
     @staticmethod
     def getDistance(p1, p2):
         return ((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)**0.5
@@ -71,11 +83,14 @@ class Ghost:
     def reset(self):
         self.pos = self.initPos
         cellWidth = self.app.width/21
-        self.center = (((self.pos[1]+0.5) * cellWidth, (self.pos[0] + 0.5) * cellWidth))
+        self.center = (((self.pos[1]+0.5) * cellWidth,
+                       (self.pos[0] + 0.5) * cellWidth))
+
 
 class randomGhost(Ghost):
     def evaluateDirection(self):
         self.changeDir(random.randint(0, 3))
+
 
 class basicGhost(Ghost):
     def evaluateDirection(self):
@@ -83,15 +98,15 @@ class basicGhost(Ghost):
             self.speed = 7 + self.color
             possibleDirections = []
             for x in range(-1, 2, 2):
-                if (self.pos[1] + x >= 0 and self.pos[1] + x <= 21 and 
-                    self.app.board[self.pos[0]][self.pos[1] + x] != "X"):
+                if (self.pos[1] + x >= 0 and self.pos[1] + x <= 21 and
+                        self.app.board[self.pos[0]][self.pos[1] + x] != "X"):
                     if x < 0:
                         possibleDirections.append(1)
                     else:
                         possibleDirections.append(0)
             for y in range(-1, 2, 2):
-                if (self.pos[0] + y >= 0 and self.pos[0] + y <= 25 and 
-                    self.app.board[self.pos[0] + y][self.pos[1]] != "X"):
+                if (self.pos[0] + y >= 0 and self.pos[0] + y <= 25 and
+                        self.app.board[self.pos[0] + y][self.pos[1]] != "X"):
                     if y < 0:
                         possibleDirections.append(2)
                     else:
@@ -100,40 +115,44 @@ class basicGhost(Ghost):
             for direction in possibleDirections:
                 distanceToPacman = 0
                 if direction < 2:
-                    newPos = (self.pos[0], self.pos[1] + ((1 - direction) * 2 -1))
+                    newPos = (self.pos[0], self.pos[1] +
+                              ((1 - direction) * 2 - 1))
                 else:
-                    newPos = (self.pos[0] + (direction%2 * 2) -1, self.pos[1])
-                distanceToPacman = Ghost.getDistance(self.app.pacman.pos, newPos)
+                    newPos = (self.pos[0] + (direction %
+                              2 * 2) - 1, self.pos[1])
+                distanceToPacman = Ghost.getDistance(
+                    self.app.pacman.pos, newPos)
                 if newPos in self.previousMoves:
                     continue
-                possibleMoves[direction] = distanceToPacman  
-                print(f"For Dir: {direction} New Pos: {newPos} Pacman Pos: {self.app.pacman.pos}")
+                possibleMoves[direction] = distanceToPacman
             minDistance = 1000000
             minDir = 0
             for key in possibleMoves:
                 if (possibleMoves[key] < minDistance):
                     minDistance = possibleMoves[key]
                     minDir = key
-                    print(f"Key: {key} MinDir: {minDir} minDistance: {minDistance}")
+                    """ print(f"Key: {key} MinDir: {minDir} minDistance:
+                        {minDistance}") """
                 elif possibleMoves[key] == minDistance:
                     minDir = key
                 else:
-                    print(f"Key: {key} MinDir: {minDir} Distance: {possibleMoves[key]}")
+                    """ print(f"Key: {key} MinDir: {minDir} Distance:
+                        {possibleMoves[key]}") """
             print(minDir)
             self.changeDir(minDir)
         else:
             self.speed = 9 + self.color
             possibleDirections = []
             for x in range(-1, 2, 2):
-                if (self.pos[1] + x >= 0 and self.pos[1] + x <= 21 and 
-                    self.app.board[self.pos[0]][self.pos[1] + x] != "X"):
+                if (self.pos[1] + x >= 0 and self.pos[1] + x <= 21 and
+                        self.app.board[self.pos[0]][self.pos[1] + x] != "X"):
                     if x < 0:
                         possibleDirections.append(1)
                     else:
                         possibleDirections.append(0)
             for y in range(-1, 2, 2):
-                if (self.pos[0] + y >= 0 and self.pos[0] + y <= 25 and 
-                    self.app.board[self.pos[0] + y][self.pos[1]] != "X"):
+                if (self.pos[0] + y >= 0 and self.pos[0] + y <= 25 and
+                        self.app.board[self.pos[0] + y][self.pos[1]] != "X"):
                     if y < 0:
                         possibleDirections.append(2)
                     else:
@@ -142,24 +161,30 @@ class basicGhost(Ghost):
             for direction in possibleDirections:
                 distanceToPacman = 0
                 if direction < 2:
-                    newPos = (self.pos[0], self.pos[1] + ((1 - direction) * 2 -1))
+                    newPos = (self.pos[0], self.pos[1] +
+                              ((1 - direction) * 2 - 1))
                 else:
-                    newPos = (self.pos[0] + (direction%2 * 2) -1, self.pos[1])
-                distanceToPacman = Ghost.getDistance(self.app.pacman.pos, newPos)
+                    newPos = (self.pos[0] + (direction %
+                              2 * 2) - 1, self.pos[1])
+                distanceToPacman = Ghost.getDistance(
+                    self.app.pacman.pos, newPos)
                 if newPos in self.previousMoves:
                     continue
-                possibleMoves[direction] = distanceToPacman  
-                print(f"For Dir: {direction} New Pos: {newPos} Pacman Pos: {self.app.pacman.pos}")
+                possibleMoves[direction] = distanceToPacman
+                """ print(f"For Dir: {direction} New Pos: {newPos} Pacman Pos:
+                    {self.app.pacman.pos}") """
             maxDistance = 0
             maxDir = 0
             for key in possibleMoves:
                 if (possibleMoves[key] > maxDistance):
                     maxDistance = possibleMoves[key]
                     maxDir = key
-                    print(f"Key: {key} MaxDir: {maxDir} maxDistance: {maxDistance}")
+                    print(
+                        f"Key: {key} MaxDir: {maxDir} maxDistance: {maxDistance}")
                 elif possibleMoves[key] == maxDistance:
                     maxDir = key
                 else:
-                    print(f"Key: {key} MaxDir: {maxDir} Distance: {possibleMoves[key]}")
+                    """ print(f"Key: {key} MaxDir: {maxDir} Distance:
+                        {possibleMoves[key]}") """
             print(maxDir)
             self.changeDir(maxDir)
