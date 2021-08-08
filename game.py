@@ -33,7 +33,7 @@ def appStarted(app):
                  ["X", " ", " ", " ", " ", " ", "X", " ", " ", " ", "X", " ", " ", " ", "X", " ", " ", " ", " ", " ", "X"],
                  ["X", "X", "X", "X", "X", " ", "X", "X", "X", "O", "X", "O", "X", "X", "X", " ", "X", "X", "X", "X", "X"],
                  ["X", "X", "X", "X", "X", " ", "X", "O", "O", "O", "O", "O", "O", "O", "X", " ", "X", "X", "X", "X", "X"],
-                 ["X", "X", "X", "X", "X", " ", "X", "O", "X", "X", "X", "X", "X", "O", "X", " ", "X", "X", "X", "X", "X"],
+                 ["X", "X", "X", "X", "X", " ", "X", "O", "X", "X", "G", "X", "X", "O", "X", " ", "X", "X", "X", "X", "X"],
                  ["X", "X", "X", "X", "X", " ", "X", "O", "X", "X", "X", "X", "X", "O", "X", " ", "X", "X", "X", "X", "X"],
                  ["O", "O", "O", "O", "O", " ", "O", "O", "X", "X", "X", "X", "X", "O", "O", " ", "O", "O", "O", "O", "O"],
                  ["X", "X", "X", "X", "X", " ", "X", "O", "X", "X", "X", "X", "X", "O", "X", " ", "X", "X", "X", "X", "X"],
@@ -63,12 +63,18 @@ def keyPressed(app, event):
 
 def timerFired(app):
     app.pacmanImg = app.pacman.getImg()
+    app.pacman.move()
     for i in range(len(app.ghosts)):
         app.ghostImgs[i] = app.ghosts[i].getImg()
         app.ghosts[i].nextSprite()
         app.ghosts[i].move()
+        if (app.pacman.pos == app.ghosts[i].pos):
+            if app.powered: 
+                app.ghosts[i].reset()
+                app.score += 50
+            else:
+                time.sleep(10)
     #app.pacman.nextSprite()
-    app.pacman.move()
     if (app.board[app.pacman.pos[0]][app.pacman.pos[1]] == " "):
         app.score += 1
         app.board[app.pacman.pos[0]][app.pacman.pos[1]] = "O"

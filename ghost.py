@@ -1,11 +1,12 @@
 from cmu_112_graphics import *
 from PIL import Image
-import random
+import random, copy, time
 
 class Ghost:
     def __init__(self, app, pos, color):
         self.app = app
         self.pos = pos
+        self.initPos = copy.copy(self.pos)
         self.dir = 0
         self.color = color
         self.spriteCount = 0
@@ -45,6 +46,14 @@ class Ghost:
         else:
             dy = self.speed
         newPos = self.getPos((self.center[0] + dx, self.center[1] + dy))
+        if newPos[1] < 0 or newPos[1] >= len(self.app.board[0]):
+            newPos = (newPos[0], ((len(self.app.board[0]) - 1) - newPos[1]))
+            cellWidth = self.app.width/21
+            self.center = (((self.newPos[1]+0.5) * cellWidth, (self.newPos[0] + 0.5) * cellWidth))
+            self.pos = copy.copy(newPos)
+            print(self.pos)
+            time.sleep(2)
+            return
         if self.app.board[newPos[0]][newPos[1]] != "X":
             self.center = (self.center[0] + dx, self.center[1] + dy)
             if self.getPos(self.center) != self  .pos:
@@ -58,6 +67,12 @@ class Ghost:
     @staticmethod
     def getDistance(p1, p2):
         return ((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)**0.5
+
+    def reset(self):
+        self.pos = self.initPos
+        cellWidth = self.app.width/21
+        self.center = (((self.pos[1]+0.5) * cellWidth, (self.pos[0] + 0.5) * cellWidth))
+
 class randomGhost(Ghost):
     def evaluateDirection(self):
         self.changeDir(random.randint(0, 3))
