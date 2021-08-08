@@ -1,8 +1,11 @@
 from cmu_112_graphics import *
 from pacman import Pacman
 from ghost import *
+import time
 
 def appStarted(app):
+    app.powered = False
+    app.poweredTime = time.time()
     app.background = app.  scaleImage(app.loadImage(
         'SpriteSheet.png').crop((370, 3, 536, 216)), 3.5)
     app.dot = app.scaleImage(app.loadImage(
@@ -22,7 +25,7 @@ def appStarted(app):
     app.board = [["X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X"],
                  ["X", " ", " ", " ", " ", " ", " ", " ", " ", " ", "X", " ", " ", " ", " ", " ", " ", " ", " ", " ", "X"],
                  ["X", " ", "X", "X", "X", " ", "X", "X", "X", " ", "X", " ", "X", "X", "X", " ", "X", "X", "X", " ", "X"],
-                 ["X", " ", "X", "X", "X", " ", "X", "X", "X", " ", "X", " ", "X", "X", "X", " ", "X", "X", "X", " ", "X"],
+                 ["X", "P", "X", "X", "X", " ", "X", "X", "X", " ", "X", " ", "X", "X", "X", " ", "X", "X", "X", "P", "X"],
                  ["X", " ", "X", "X", "X", " ", "X", "X", "X", " ", "X", " ", "X", "X", "X", " ", "X", "X", "X", " ", "X"],
                  ["X", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "X"],
                  ["X", " ", "X", "X", "X", " ", "X", " ", "X", "X", "X", "X", "X", " ", "X", " ", "X", "X", "X", " ", "X"],
@@ -39,7 +42,7 @@ def appStarted(app):
                  ["X", "X", "X", "X", "X", " ", "X", " ", "X", "X", "X", "X", "X", " ", "X", " ", "X", "X", "X", "X", "X"],
                  ["X", " ", " ", " ", " ", " ", " ", " ", " ", " ", "X", " ", " ", " ", " ", " ", " ", " ", " ", " ", "X"],
                  ["X", " ", "X", "X", "X", " ", "X", "X", "X", " ", "X", " ", "X", "X", "X", " ", "X", "X", "X", " ", "X"],
-                 ["X", " ", " ", " ", "X", " ", " ", " ", " ", " ", "O", " ", " ", " ", " ", " ", "X", " ", " ", " ", "X"],
+                 ["X", "P", " ", " ", "X", " ", " ", " ", " ", " ", "O", " ", " ", " ", " ", " ", "X", " ", " ", "P", "X"],
                  ["X", "X", "X", " ", "X", " ", "X", " ", "X", "X", "X", "X", "X", " ", "X", " ", "X", " ", "X", "X", "X"],
                  ["X", "X", "X", " ", "X", " ", "X", " ", "X", "X", "X", "X", "X", " ", "X", " ", "X", " ", "X", "X", "X"],
                  ["X", " ", " ", " ", " ", " ", "X", " ", " ", " ", "X", " ", " ", " ", "X", " ", " ", " ", " ", " ", "X"],
@@ -69,6 +72,13 @@ def timerFired(app):
     if (app.board[app.pacman.pos[0]][app.pacman.pos[1]] == " "):
         app.score += 1
         app.board[app.pacman.pos[0]][app.pacman.pos[1]] = "O"
+    elif (app.board[app.pacman.pos[0]][app.pacman.pos[1]] == "P"):
+        app.score += 10
+        app.board[app.pacman.pos[0]][app.pacman.pos[1]] = "O"
+        app.powered = True
+        app.poweredTime = time.time()
+    if time.time() > 5 + app.poweredTime:
+        app.powered = False
 
 def getCenter(app, pos):
     cellWidth = app.width/21
@@ -90,10 +100,14 @@ def drawDots(app, canvas):
         for col in range(len(app.board[row])):
             if (app.board[row][col] == " "):
                 canvas.create_rectangle(7 + (28 * col), 7 + (28 * row), 15 + (28 * col), 15 + (28 * row), fill = "white")
-
+            elif (app.board[row][col] == "P"):
+                canvas.create_oval(-3 + (28 * col),-3 + (28 * row), 25 + (28 * col),25 + (28 * row), fill = "white", width = 0)
+            else:
+                canvas.create_rectangle(7 + (28 * col), 7 + (28 * row), 15 + (28 * col), 15 + (28 * row), fill = "black")
 def drawGhosts(app, canvas):
     for i in range(len(app.ghosts)):
         x,y = app.ghosts[i].center
         canvas.create_image(x, y, image = ImageTk.PhotoImage(app.ghostImgs[i]), anchor = "c")
 
 runApp(width=579, height=940)
+  
