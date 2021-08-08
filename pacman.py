@@ -1,5 +1,6 @@
 from cmu_112_graphics import *
 from PIL import Image
+import time
 
 class Pacman:
     def __init__(self, app, pos):
@@ -44,6 +45,16 @@ class Pacman:
         else:
             dy = self.speed
         newPos = self.getPos((self.center[0] + dx, self.center[1] + dy))
+        if newPos[1] < 0 or newPos[1] >= len(self.app.board[0]):
+            if self.dir == 0:
+                newPos = (newPos[0], 0)
+            else:
+                newPos = (newPos[0], 20)
+            cellWidth = self.app.width/21
+            self.center = (((newPos[1]+0.5) * cellWidth, (newPos[0] + 0.5) * cellWidth))
+            self.pos = copy.copy(newPos)
+            print(self.pos)
+            return
         if self.app.board[newPos[0]][newPos[1]] != "X":
             self.center = (self.center[0] + dx, self.center[1] + dy)
             self.pos = self.getPos(self.center)
