@@ -59,7 +59,7 @@ class Ghost:
             cellWidth = self.app.width/21
             self.center = (
                 ((self.newPos[1]+0.5) * cellWidth,
-                 (self.newPos[0] + 0.5) * cellWidth))
+                 (self.newPos[0]+0.5) * cellWidth))
             self.pos = copy.copy(newPos)
             print(self.pos)
             time.sleep(2)
