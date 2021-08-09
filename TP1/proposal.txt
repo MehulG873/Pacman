@@ -3,7 +3,7 @@ PROJECT DESCRIPTION
 but with a twist. The twist is that this is a multiplayer game where someone 
 plays Pacman, but the other player gets to play as one of the ghosts. Along
 with that we will have three different difficulty ghosts, and over the network
-accessing. The yellow circle will go around the map eating special pellets and
+multiplayer. Pacman will go around the map eating special pellets and
 increasing its score. Its adversaries are 4 ghosts of varying colors, whose
 objective is to capture the pacman. 
 
@@ -11,7 +11,7 @@ STRUCTURAL PLAN
     Client.py is the file that the client will run to control either pacman or ghost.
 This file will also use Network.py to communicate with the server in order to
 progress the game
-    Network.py is a simple class file that allows the client to easily communicate with
+    Network.py is a basic file that allows the client to easily communicate with
 the server
     Server.py will control a majority of the game logic, and updating of the computer
 sending data to each of the clients
