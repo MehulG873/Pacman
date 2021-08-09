@@ -52,6 +52,48 @@ def shortestDijkastra(graph, iNode, fNode):
     print(minNode)
     return minNode
 
+def longestDijkastra(graph, iNode, fNode):
+    """ print()
+    print()
+    print()
+    print()
+    print()
+    print()
+    print()
+    print() """
+    unvisited = set()
+    distance = dict()
+    for key in graph:
+        unvisited.add(graph[key])
+        distance[graph[key]] = sys.maxsize
+    distance[fNode] = 0
+    currentNode = fNode
+    while iNode in unvisited:
+        for neighbour in currentNode.neighbours:
+            #print(currentNode.neighbours)
+            if neighbour in unvisited:
+                nodeDistance = distance[currentNode]
+                if (distance[neighbour] > nodeDistance + 1):
+                    distance[neighbour] = nodeDistance + 1
+        unvisited.remove(currentNode)
+        if iNode not in unvisited:
+            break
+        else:
+            minDist = sys.maxsize
+            minNode = None
+            for key in distance:
+                if distance[key] < minDist and key in unvisited:
+                    minDist = distance[key]
+                    minNode = key
+            currentNode = minNode
+    maxDistance = 0
+    maxNode = None
+    for neighbour in iNode.neighbours:
+        if (distance[neighbour] > maxDistance):
+            maxDistance = distance[neighbour]
+            maxNode = neighbour
+    print(maxNode)
+    return maxNode
 def generateGraph(board):
     graph = dict()
     for row in range(len(board)):

@@ -6,24 +6,6 @@ import time
 
 def appStarted(app):
     app.powered = False
-    app.poweredTime = time.time()
-    app.background = app.  scaleImage(app.loadImage(
-        'SpriteSheet.png').crop((370, 3, 536, 216)), 3.5)
-    app.dot = app.scaleImage(app.loadImage(
-        'SpriteSheet.png').crop((3, 81, 5, 83)), 3.5)
-    app.blank = app.scaleImage(app.loadImage(
-        'SpriteSheet.png').crop((5, 81, 7, 83)), 3.5)
-    app.pacman = Pacman(app, (20, 10))
-    app.pacmanImg = app.pacman.getImg()
-    app.title = app.scaleImage(app.loadImage(
-        'SpriteSheet.png').crop((2, 4, 184, 50)), 2.75)
-    app.ghosts = [randomGhost(app, (10, 10), 0), basicGhost(
-        app, (13, 13), 1), basicGhost(app, (10, 15), 2), basicGhost(app, (7, 13), 3)]
-    app.ghostImgs = []
-    for ghost in app.ghosts:
-        app.ghostImgs.append(ghost.getImg())
-    app.timerDelay = 20
-    app.score = 0
     app.board = [["X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X"],
                  ["X", " ", " ", " ", " ", " ", " ", " ", " ", " ", "X", " ", " ", " ", " ", " ", " ", " ", " ", " ", "X"],
                  ["X", " ", "X", "X", "X", " ", "X", "X", "X", " ", "X", " ", "X", "X", "X", " ", "X", "X", "X", " ", "X"],
@@ -52,7 +34,24 @@ def appStarted(app):
                  ["X", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "X"],
                  ["X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X"],
                  ]
-
+    app.poweredTime = time.time()
+    app.background = app.  scaleImage(app.loadImage(
+        'SpriteSheet.png').crop((370, 3, 536, 216)), 3.5)
+    app.dot = app.scaleImage(app.loadImage(
+        'SpriteSheet.png').crop((3, 81, 5, 83)), 3.5)
+    app.blank = app.scaleImage(app.loadImage(
+        'SpriteSheet.png').crop((5, 81, 7, 83)), 3.5)
+    app.pacman = Pacman(app, (20, 10))
+    app.pacmanImg = app.pacman.getImg()
+    app.title = app.scaleImage(app.loadImage(
+        'SpriteSheet.png').crop((2, 4, 184, 50)), 2.75)
+    app.ghosts = [dijkstraGhost(app, (10, 10), 0), dijkstraGhost( app, (13, 13), 1), basicGhost(app, (10, 15), 2), basicGhost(app, (7, 13), 3)]
+    app.ghostImgs = []
+    for ghost in app.ghosts:
+        app.ghostImgs.append(ghost.getImg())
+    app.timerDelay = 20
+    app.score = 0
+    
 
 def keyPressed(app, event):
     if (event.key == "Up"):

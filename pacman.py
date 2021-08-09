@@ -71,7 +71,6 @@ class Pacman:
             self.center = (((newPos[1]+0.5) * cellWidth,
                            (newPos[0] + 0.5) * cellWidth))
             self.pos = copy.copy(newPos)
-            print(self.pos)
             return
         if self.app.board[newPos[0]][newPos[1]] != "X":
             self.center = (self.center[0] + dx, self.center[1] + dy)

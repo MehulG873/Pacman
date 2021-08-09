@@ -3,7 +3,7 @@ from PIL import Image
 import random
 import copy
 import time
-
+import node
 
 class Ghost:
     def __init__(self, app, pos, color):
@@ -61,7 +61,6 @@ class Ghost:
                 ((self.newPos[1]+0.5) * cellWidth,
                  (self.newPos[0]+0.5) * cellWidth))
             self.pos = copy.copy(newPos)
-            print(self.pos)
             time.sleep(2)
             return
         if self.app.board[newPos[0]][newPos[1]] != "X":
@@ -138,7 +137,6 @@ class basicGhost(Ghost):
                 else:
                     """ print(f"Key: {key} MinDir: {minDir} Distance:
                         {possibleMoves[key]}") """
-            print(minDir)
             self.changeDir(minDir)
         else:
             self.speed = 9 + self.color
@@ -179,12 +177,36 @@ class basicGhost(Ghost):
                 if (possibleMoves[key] > maxDistance):
                     maxDistance = possibleMoves[key]
                     maxDir = key
-                    print(
-                        f"Key: {key} MaxDir: {maxDir} maxDistance: {maxDistance}")
+                    """ print(f"Key: {key} MaxDir: {maxDir} maxDistance:
+                        {maxDistance}") """
                 elif possibleMoves[key] == maxDistance:
                     maxDir = key
                 else:
                     """ print(f"Key: {key} MaxDir: {maxDir} Distance:
                         {possibleMoves[key]}") """
-            print(maxDir)
+            #print(maxDir)
             self.changeDir(maxDir)
+
+class dijkstraGhost(Ghost):
+    def __init__(self, app, pos, color):
+        super().__init__(app, pos, color)
+        self.graph = node.generateGraph(app.board)
+    def evaluateDirection(self):
+        if not self.app.powered:
+            self.bestNode = node.shortestDijkastra(self.graph, self.graph[self.pos], 
+                                          self.graph[self.app.pacman.pos])
+        else:
+            self.bestNode = node.longestDijkastra(self.graph, self.graph[self.pos], 
+                                          self.graph[self.app.pacman.pos])
+            print(self.bestNode)
+        direction = self.dir
+        if (self.pos[0] > self.bestNode.pos[0]):
+            direction = 2
+        elif (self.pos[0] < self.bestNode.pos[0]):
+            direction = 3
+        elif (self.pos[1] > self.bestNode.pos[1]):
+            direction = 1
+        elif (self.pos[1] < self.bestNode.pos[1]):
+            direction = 0
+        if direction != self.dir:
+            self.changeDir(direction)
