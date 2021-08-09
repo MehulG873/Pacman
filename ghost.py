@@ -105,14 +105,14 @@ class basicGhost(Ghost):
             self.speed = 7 + self.color
             possibleDirections = []
             for x in range(-1, 2, 2):
-                if (self.pos[1] + x >= 0 and self.pos[1] + x <= 21 and
+                if (self.pos[1] + x >= 0 and self.pos[1] + x <= 20 and
                         self.app.board[self.pos[0]][self.pos[1] + x] != "X"):
                     if x < 0:
                         possibleDirections.append(1)
                     else:
                         possibleDirections.append(0)
             for y in range(-1, 2, 2):
-                if (self.pos[0] + y >= 0 and self.pos[0] + y <= 25 and
+                if (self.pos[0] + y >= 0 and self.pos[0] + y <= 20 and
                         self.app.board[self.pos[0] + y][self.pos[1]] != "X"):
                     if y < 0:
                         possibleDirections.append(2)
@@ -158,7 +158,7 @@ class basicGhost(Ghost):
                     else:
                         possibleDirections.append(0)
             for y in range(-1, 2, 2):
-                if (self.pos[0] + y >= 0 and self.pos[0] + y <= 25 and
+                if (self.pos[0] + y >= 0 and self.pos[0] + y <= 20 and
                         self.app.board[self.pos[0] + y][self.pos[1]] != "X"):
                     if y < 0:
                         possibleDirections.append(2)
