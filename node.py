@@ -9,7 +9,10 @@ class Node(object):
         #print(f"Neighbours: {self.neighbours}")
     def __repr__(self):
         return f"Node Position: {self.pos}"
-def shortestDijkastra(graph, iNode, fNode):
+
+#Dijkstra Algorithims: https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm 
+#Extra Help: https://docs.google.com/presentation/d/1qH2kkdoZQAD9Vq3HDBELOh5rb1KZ1pvX4WAKN1dmUlo/edit#slide=id.g9fef3b5456_0_216 
+def shortestDijkstra(graph, iNode, fNode):
     """ print()
     print()
     print()
@@ -39,8 +42,8 @@ def shortestDijkastra(graph, iNode, fNode):
             minDist = sys.maxsize
             minNode = None
             for key in distance:
-                if distance[key] < minDist and key in unvisited:
-                    minDist = distance[key]
+                if distance[key] + pythagoreanDistance(key.pos, iNode.pos) < minDist and key in unvisited:
+                    minDist = distance[key] + pythagoreanDistance(key.pos, iNode.pos)
                     minNode = key
             currentNode = minNode
     minDistance = sys.maxsize
@@ -52,7 +55,7 @@ def shortestDijkastra(graph, iNode, fNode):
     print(minNode)
     return minNode
 
-def longestDijkastra(graph, iNode, fNode):
+def longestDijkstra(graph, iNode, fNode):
     """ print()
     print()
     print()
@@ -82,8 +85,8 @@ def longestDijkastra(graph, iNode, fNode):
             minDist = sys.maxsize
             minNode = None
             for key in distance:
-                if distance[key] < minDist and key in unvisited:
-                    minDist = distance[key]
+                if (distance[key] + pythagoreanDistance(key.pos, iNode.pos)) < minDist and key in unvisited:
+                    minDist = distance[key] + pythagoreanDistance(key.pos, iNode.pos)
                     minNode = key
             currentNode = minNode
     maxDistance = 0
@@ -94,6 +97,7 @@ def longestDijkastra(graph, iNode, fNode):
             maxNode = neighbour
     print(maxNode)
     return maxNode
+
 def generateGraph(board):
     graph = dict()
     for row in range(len(board)):
@@ -122,3 +126,6 @@ def generateGraph(board):
                 print(f"Node: {node} Neighbour: {graph[(row, col + dc)]}")
                 node.addNeighbour(graph[(row, col + dc)]) """
     return graph
+
+def pythagoreanDistance(p1, p2):
+        return ((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)**0.5

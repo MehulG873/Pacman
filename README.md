@@ -1,2 +1,1 @@
-# Pacman
-Creates a pacman game
+No Readme Currently. Please refer to proposal.txt for information

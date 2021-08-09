@@ -85,11 +85,9 @@ class Ghost:
         self.center = (((self.pos[1]+0.5) * cellWidth,
                        (self.pos[0] + 0.5) * cellWidth))
 
-
 class randomGhost(Ghost):
     def evaluateDirection(self):
         self.changeDir(random.randint(0, 3))
-
 
 class basicGhost(Ghost):
     def evaluateDirection(self):
@@ -97,14 +95,14 @@ class basicGhost(Ghost):
             self.speed = 7 + self.color
             possibleDirections = []
             for x in range(-1, 2, 2):
-                if (self.pos[1] + x >= 0 and self.pos[1] + x <= 21 and
+                if (self.pos[1] + x >= 0 and self.pos[1] + x <= 20 and
                         self.app.board[self.pos[0]][self.pos[1] + x] != "X"):
                     if x < 0:
                         possibleDirections.append(1)
                     else:
                         possibleDirections.append(0)
             for y in range(-1, 2, 2):
-                if (self.pos[0] + y >= 0 and self.pos[0] + y <= 25 and
+                if (self.pos[0] + y >= 0 and self.pos[0] + y <= 20 and
                         self.app.board[self.pos[0] + y][self.pos[1]] != "X"):
                     if y < 0:
                         possibleDirections.append(2)
@@ -142,14 +140,14 @@ class basicGhost(Ghost):
             self.speed = 9 + self.color
             possibleDirections = []
             for x in range(-1, 2, 2):
-                if (self.pos[1] + x >= 0 and self.pos[1] + x <= 21 and
+                if (self.pos[1] + x >= 0 and self.pos[1] + x <= 20 and
                         self.app.board[self.pos[0]][self.pos[1] + x] != "X"):
                     if x < 0:
                         possibleDirections.append(1)
                     else:
                         possibleDirections.append(0)
             for y in range(-1, 2, 2):
-                if (self.pos[0] + y >= 0 and self.pos[0] + y <= 25 and
+                if (self.pos[0] + y >= 0 and self.pos[0] + y <= 20 and
                         self.app.board[self.pos[0] + y][self.pos[1]] != "X"):
                     if y < 0:
                         possibleDirections.append(2)
@@ -193,12 +191,11 @@ class dijkstraGhost(Ghost):
         self.graph = node.generateGraph(app.board)
     def evaluateDirection(self):
         if not self.app.powered:
-            self.bestNode = node.shortestDijkastra(self.graph, self.graph[self.pos], 
+            self.bestNode = node.shortestDijkstra(self.graph, self.graph[self.pos], 
                                           self.graph[self.app.pacman.pos])
         else:
-            self.bestNode = node.longestDijkastra(self.graph, self.graph[self.pos], 
+            self.bestNode = node.longestDijkstra(self.graph, self.graph[self.pos], 
                                           self.graph[self.app.pacman.pos])
-            print(self.bestNode)
         direction = self.dir
         if (self.pos[0] > self.bestNode.pos[0]):
             direction = 2
