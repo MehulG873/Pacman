@@ -60,49 +60,43 @@ def appStarted(app):
         app.ghostImgs.append(ghost.getImg())
     app.timerDelay = 20
     app.score = 0
-    app.paused = True
     
 
 def keyPressed(app, event):
     if (event.key == "Up"):
-        app.paused = False
         app.pacman.changeDir(2)
     elif (event.key == "Down"):
-        app.paused = False
         app.pacman.changeDir(3)
     elif (event.key == "Left"):
-        app.paused = False
         app.pacman.changeDir(1)
     elif (event.key == "Right"):
-        app.paused = False
         app.pacman.changeDir(0)
 
 
 def timerFired(app):
-    if not app.paused:
-        app.pacmanImg = app.pacman.getImg()
-        app.pacman.move()
-        for i in range(len(app.ghosts)):
-            app.ghostImgs[i] = app.ghosts[i].getImg()
-            app.ghosts[i].nextSprite()
-            app.ghosts[i].move()
-            if (app.pacman.pos == app.ghosts[i].pos):
-                if app.powered:
-                    app.ghosts[i].reset()
-                    app.score += 50
-                else:
-                    time.sleep(10)
-        # app.pacman.nextSprite()
-        if (app.board[app.pacman.pos[0]][app.pacman.pos[1]] == " "):
-            app.score += 1
-            app.board[app.pacman.pos[0]][app.pacman.pos[1]] = "O"
-        elif (app.board[app.pacman.pos[0]][app.pacman.pos[1]] == "P"):
-            app.score += 10
-            app.board[app.pacman.pos[0]][app.pacman.pos[1]] = "O"
-            app.powered = True
-            app.poweredTime = time.time()
-        if time.time() > 5 + app.poweredTime:
-            app.powered = False
+    app.pacmanImg = app.pacman.getImg()
+    app.pacman.move()
+    for i in range(len(app.ghosts)):
+        app.ghostImgs[i] = app.ghosts[i].getImg()
+        app.ghosts[i].nextSprite()
+        app.ghosts[i].move()
+        if (app.pacman.pos == app.ghosts[i].pos):
+            if app.powered:
+                app.ghosts[i].reset()
+                app.score += 50
+            else:
+                time.sleep(10)
+    # app.pacman.nextSprite()
+    if (app.board[app.pacman.pos[0]][app.pacman.pos[1]] == " "):
+        app.score += 1
+        app.board[app.pacman.pos[0]][app.pacman.pos[1]] = "O"
+    elif (app.board[app.pacman.pos[0]][app.pacman.pos[1]] == "P"):
+        app.score += 10
+        app.board[app.pacman.pos[0]][app.pacman.pos[1]] = "O"
+        app.powered = True
+        app.poweredTime = time.time()
+    if time.time() > 5 + app.poweredTime:
+        app.powered = False
 
 
 def getCenter(app, pos):
