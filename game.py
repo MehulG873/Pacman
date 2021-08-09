@@ -17,7 +17,7 @@ def appStarted(app):
     app.pacmanImg = app.pacman.getImg()
     app.title = app.scaleImage(app.loadImage(
         'SpriteSheet.png').crop((2, 4, 184, 50)), 2.75)
-    app.ghosts = [basicGhost(app, (10, 10), 0), basicGhost(
+    app.ghosts = [randomGhost(app, (10, 10), 0), basicGhost(
         app, (13, 13), 1), basicGhost(app, (10, 15), 2), basicGhost(app, (7, 13), 3)]
     app.ghostImgs = []
     for ghost in app.ghosts:
