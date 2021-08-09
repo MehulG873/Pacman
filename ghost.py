@@ -43,7 +43,6 @@ class Ghost:
         self.dir = newDir
 
     def move(self):
-        self.evaluateDirection()
         dx, dy = 0, 0
         if self.dir == 0:
             dx = self.speed
@@ -55,14 +54,15 @@ class Ghost:
             dy = self.speed
         newPos = self.getPos((self.center[0] + dx, self.center[1] + dy))
         if newPos[1] < 0 or newPos[1] >= len(self.app.board[0]):
-            newPos = (newPos[0], ((len(self.app.board[0]) - 1) - newPos[1]))
+            if self.dir == 0:
+                newPos = (newPos[0], 0)
+            else:
+                newPos = (newPos[0], 20)
             cellWidth = self.app.width/21
-            self.center = (
-                ((self.newPos[1]+0.5) * cellWidth,
-                 (self.newPos[0]+0.5) * cellWidth))
+            self.center = (((newPos[1]+0.5) * cellWidth,
+                           (newPos[0] + 0.5) * cellWidth))
             self.pos = copy.copy(newPos)
             print(self.pos)
-            time.sleep(2)
             return
         if self.app.board[newPos[0]][newPos[1]] != "X":
             self.center = (self.center[0] + dx, self.center[1] + dy)
@@ -72,9 +72,16 @@ class Ghost:
                     self.previousMoves.pop(0)
             self.pos = self.getPos(self.center)
             self.nextSprite()
+        self.evaluateDirection()
+
+    def roundPos(self):
+        cellWidth = self.app.width/21
+        self.center = (((self.pos[1]+0.5) * cellWidth,
+                       (self.pos[0] + 0.5) * cellWidth))
 
     def evaluateDirection(self):
         self.changeDir(random.randint(0, 3))
+        self.roundPos()
 
     @staticmethod
     def getDistance(p1, p2):
@@ -144,7 +151,7 @@ class basicGhost(Ghost):
             self.speed = 9 + self.color
             possibleDirections = []
             for x in range(-1, 2, 2):
-                if (self.pos[1] + x >= 0 and self.pos[1] + x <= 21 and
+                if (self.pos[1] + x >= 0 and self.pos[1] + x <= 20 and
                         self.app.board[self.pos[0]][self.pos[1] + x] != "X"):
                     if x < 0:
                         possibleDirections.append(1)
@@ -179,8 +186,8 @@ class basicGhost(Ghost):
                 if (possibleMoves[key] > maxDistance):
                     maxDistance = possibleMoves[key]
                     maxDir = key
-                    print(
-                        f"Key: {key} MaxDir: {maxDir} maxDistance: {maxDistance}")
+                    """ print(f"Key: {key} MaxDir: {maxDir} maxDistance:
+                        {maxDistance}") """
                 elif possibleMoves[key] == maxDistance:
                     maxDir = key
                 else:

@@ -37,6 +37,11 @@ class Pacman:
     def getImg(self):
         return self.spriteImages[(2 * self.dir) + self.spriteCount]
 
+    def roundPos(self):
+        cellWidth = self.app.width/21
+        self.center = (((self.pos[1]+0.5) * cellWidth,
+                       (self.pos[0] + 0.5) * cellWidth))
+
     def getPos(self, cord):
         row = round((cord[1]-7)/28)
         col = round((cord[0]-7)/28)
@@ -44,6 +49,7 @@ class Pacman:
 
     def changeDir(self, newDir):
         self.dir = newDir
+        self.roundPos()
 
     def move(self):
         dx, dy = 0, 0
