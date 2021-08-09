@@ -11,10 +11,12 @@ from cmu_112_graphics import *
 from pacman import Pacman
 from ghost import *
 import time
-
+from datetime import date
 
 def appStarted(app):
+    app.mode = 'gameScreen'
     app.powered = False
+    app.scores = None
     app.board = [["X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X"],
                  ["X", " ", " ", " ", " ", " ", " ", " ", " ", " ", "X", " ", " ", " ", " ", " ", " ", " ", " ", " ", "X"],
                  ["X", " ", "X", "X", "X", " ", "X", "X", "X", " ", "X", " ", "X", "X", "X", " ", "X", "X", "X", " ", "X"],
@@ -54,7 +56,7 @@ def appStarted(app):
     app.pacmanImg = app.pacman.getImg()
     app.title = app.scaleImage(app.loadImage(
         'SpriteSheet.png').crop((2, 4, 184, 50)), 2.75)
-    app.ghosts = [dijkstraGhost(app, (10, 10), 0), dijkstraGhost( app, (13, 13), 1), basicGhost(app, (10, 15), 2), basicGhost(app, (7, 13), 3)]
+    app.ghosts = [dijkstraGhost(app, (10, 10), 0), dijkstraGhost( app, (13, 13), 1), basicGhost(app, (15, 10), 2), basicGhost(app, (13, 7), 3)]
     app.ghostImgs = []
     for ghost in app.ghosts:
         app.ghostImgs.append(ghost.getImg())
@@ -62,8 +64,10 @@ def appStarted(app):
     app.score = 0
     app.paused = True
     
-
-def keyPressed(app, event):
+##############################################################################
+# Pacman Main Portion of the game
+##############################################################################
+def gameScreen_keyPressed(app, event):
     if (event.key == "Up"):
         app.paused = False
         app.pacman.changeDir(2)
@@ -77,8 +81,7 @@ def keyPressed(app, event):
         app.paused = False
         app.pacman.changeDir(0)
 
-
-def timerFired(app):
+def gameScreen_timerFired(app):
     if not app.paused:
         app.pacmanImg = app.pacman.getImg()
         app.pacman.move()
@@ -91,7 +94,8 @@ def timerFired(app):
                     app.ghosts[i].reset()
                     app.score += 50
                 else:
-                    time.sleep(10)
+                    #time.sleep(3)
+                    app.mode = "endScreen"
         # app.pacman.nextSprite()
         if (app.board[app.pacman.pos[0]][app.pacman.pos[1]] == " "):
             app.score += 1
@@ -104,13 +108,11 @@ def timerFired(app):
         if time.time() > 5 + app.poweredTime:
             app.powered = False
 
-
 def getCenter(app, pos):
     cellWidth = app.width/21
     return ((pos[1]-0.5) * cellWidth, (pos[0] - 0.5) * cellWidth)
 
-
-def redrawAll(app, canvas):
+def gameScreen_redrawAll(app, canvas):
     canvas.create_rectangle(-10, -10, app.width + 10,
                             app.height + 10, fill="black")
     canvas.create_image(
@@ -126,7 +128,6 @@ def redrawAll(app, canvas):
     canvas.create_text(
         app.width/2, 910, text=f"Score: {app.score}", fill="white",
         font="Fixedsys 36 bold")
-
 
 def drawDots(app, canvas):
     for row in range(len(app.board)):
@@ -144,12 +145,64 @@ def drawDots(app, canvas):
                     7 + (28 * col), 7 + (28 * row), 15 + (28 * col),
                     15 + (28 * row), fill="black")
 
-
 def drawGhosts(app, canvas):
     for i in range(len(app.ghosts)):
         x, y = app.ghosts[i].center
         canvas.create_image(x, y, image=ImageTk.PhotoImage(
             app.ghostImgs[i]), anchor="c")
 
+##############################################################################
+def endScreen_keyPressed(app, event):
+    convertScores(app)
+    addScore(app)
+def endScreen_redrawAll(app, canvas):
+    scoresFile = open("scores.txt", "r")
+    canvas.create_rectangle(-10, -10, app.width + 10,
+                            app.height + 10, fill="black")
+    canvas.create_image(
+        app.width/2, 0, image=ImageTk.PhotoImage(app.title), anchor="n")
+    canvas.create_text(app.width/2, app.height/5, text = "Game Over!",
+                    font="Fixedsys 96 bold", fill = "white")
+    if (app.scores != None):
+        canvas.create_text(app.width/2, app.height/3, text=f"Score: {app.score}",
+                       font="Fixedsys 36 bold", fill = "white")
+        canvas.create_text(app.width/2, app.height/3 + 50,
+                        text = f"Highscores", font="Fixedsys 24",
+                        fill = 'white', anchor = "n")
+        i = 0
+        for line in scoresFile:
+            canvas.create_text(app.width/2, app.height/3 + 79 + 29 * i,
+                            text = line, font="Fixedsys 24",
+                            fill = 'white', anchor = "n")
+            i += 1
+        if app.score in app.scores and app.scores[app.score] == date.today().strftime("%B %d, %Y"):
+            canvas.create_text(app.width/2, 2 * app.height/3,
+                            text = "NEW HIGHSCORE", font="Fixedsys 48",
+                            fill = 'white', anchor = "n")
+
+    else:
+        canvas.create_text(app.width/2, app.height/3, text = "Press Any Key To Continue",
+                       font="Fixedsys 24", fill = "white")
+
+def convertScores(app):
+    scoresFile = open("scores.txt", "r")
+    app.scores = dict()
+    for line in scoresFile:
+       app.scores[int(line[:line.index(":")])] = line[line.index(" ") + 1:]
+def addScore(app):
+    #Copied from https://www.programiz.com/python-programming/datetime/current-datetime 
+    app.scores[app.score] = date.today().strftime("%B %d, %Y")
+    bestScores = []
+    for key in app.scores:
+        bestScores.append(key)
+        while len(bestScores) > 3:
+            bestScores.remove(min(bestScores))
+    print(bestScores)
+    bestScores.sort(reverse = True)
+    scoresFile = open("scores.txt", "w")
+    for score in bestScores:
+        scoresFile.write(f"{score}: {app.scores[app.score]}\n")
+
+##############################################################################
 
 runApp(width=579, height=940)

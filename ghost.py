@@ -18,6 +18,11 @@ class Ghost:
                 (3 + 17 * i, 125 + 18 * color, 17 + 17*i, 138 + 18 * color)),
                 2.8) for i in range(8)
         ]
+        self.targetDir = "None"
+        if self.color == 1:
+            self.targetDir = "Forward"
+        elif self.color == 2:
+            self.targetDir = "Backward"
         cellWidth = app.width/21
         self.center = (((pos[1]+0.5) * cellWidth, (pos[0] + 0.5) * cellWidth))
         self.speed = 7 + color
@@ -42,6 +47,28 @@ class Ghost:
     def changeDir(self, newDir):
         self.dir = newDir
 
+    def getTargetPos(self):
+        targetPos = self.app.pacman.pos
+        if self.targetDir == "Forward":
+            if self.app.pacman.dir == 0:
+                targetPos = (targetPos[0] + 1, targetPos[1])
+            elif self.app.pacman.dir == 1:
+                targetPos = (targetPos[0] - 1, targetPos[1])
+            elif self.app.pacman.dir == 2:
+                targetPos = (targetPos[0], targetPos[1] - 1)
+            elif self.app.pacman.dir == 3:
+                targetPos = (targetPos[0], targetPos[1] + 1)
+        elif self.targetDir == "Backward":
+            if self.app.pacman.dir == 0:
+                targetPos = (targetPos[0] - 1, targetPos[1])
+            elif self.app.pacman.dir == 1:
+                targetPos = (targetPos[0] + 1, targetPos[1])
+            elif self.app.pacman.dir == 2:
+                targetPos = (targetPos[0], targetPos[1] + 1)
+            elif self.app.pacman.dir == 3:
+                targetPos = (targetPos[0], targetPos[1] - 1)
+        return targetPos
+
     def move(self):
         self.evaluateDirection()
         dx, dy = 0, 0
@@ -58,8 +85,8 @@ class Ghost:
             newPos = (newPos[0], ((len(self.app.board[0]) - 1) - newPos[1]))
             cellWidth = self.app.width/21
             self.center = (
-                ((self.newPos[1]+0.5) * cellWidth,
-                 (self.newPos[0]+0.5) * cellWidth))
+                ((newPos[1]+0.5) * cellWidth,
+                 (newPos[0]+0.5) * cellWidth))
             self.pos = copy.copy(newPos)
             time.sleep(2)
             return
@@ -91,6 +118,7 @@ class randomGhost(Ghost):
 
 class basicGhost(Ghost):
     def evaluateDirection(self):
+        targetPos = self.getTargetPos()
         if not self.app.powered:
             self.speed = 7 + self.color
             possibleDirections = []
@@ -118,7 +146,7 @@ class basicGhost(Ghost):
                     newPos = (self.pos[0] + (direction %
                               2 * 2) - 1, self.pos[1])
                 distanceToPacman = Ghost.getDistance(
-                    self.app.pacman.pos, newPos)
+                    newPos, targetPos)
                 if newPos in self.previousMoves:
                     continue
                 possibleMoves[direction] = distanceToPacman
@@ -163,12 +191,12 @@ class basicGhost(Ghost):
                     newPos = (self.pos[0] + (direction %
                               2 * 2) - 1, self.pos[1])
                 distanceToPacman = Ghost.getDistance(
-                    self.app.pacman.pos, newPos)
+                    newPos, targetPos)
                 if newPos in self.previousMoves:
                     continue
                 possibleMoves[direction] = distanceToPacman
                 """ print(f"For Dir: {direction} New Pos: {newPos} Pacman Pos:
-                    {self.app.pacman.pos}") """
+                    {targetPos}") """
             maxDistance = 0
             maxDir = 0
             for key in possibleMoves:
@@ -190,11 +218,20 @@ class dijkstraGhost(Ghost):
         super().__init__(app, pos, color)
         self.graph = node.generateGraph(app.board)
     def evaluateDirection(self):
+        targetPos = self.getTargetPos()
         if not self.app.powered:
-            self.bestNode = node.shortestDijkstra(self.graph, self.graph[self.pos], 
+            if targetPos in self.graph:
+                self.bestNode = node.shortestDijkstra(self.graph, self.graph[self.pos], 
+                                          self.graph[targetPos])
+            else:
+                self.bestNode = node.shortestDijkstra(self.graph, self.graph[self.pos], 
                                           self.graph[self.app.pacman.pos])
         else:
-            self.bestNode = node.longestDijkstra(self.graph, self.graph[self.pos], 
+            if targetPos in self.graph:
+                self.bestNode = node.longestDijkstra(self.graph, self.graph[self.pos], 
+                                          self.graph[targetPos])
+            else:
+                self.bestNode = node.longestDijkstra(self.graph, self.graph[self.pos], 
                                           self.graph[self.app.pacman.pos])
         direction = self.dir
         if (self.pos[0] > self.bestNode.pos[0]):
