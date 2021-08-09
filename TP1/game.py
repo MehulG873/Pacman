@@ -56,7 +56,8 @@ def appStarted(app):
     app.pacmanImg = app.pacman.getImg()
     app.title = app.scaleImage(app.loadImage(
         'SpriteSheet.png').crop((2, 4, 184, 50)), 2.75)
-    app.ghosts = [dijkstraGhost(app, (10, 10), 0), dijkstraGhost( app, (13, 13), 1), basicGhost(app, (15, 10), 2), basicGhost(app, (13, 7), 3)]
+    app.ghosts = [dijkstraGhost(app, (10, 10), 0), dijkstraGhost( app, (13, 13), 1), basicGhost(app, (15, 10), 2), playerGhost(app, (13, 7), 3)]
+    app.playerGhost = app.ghosts[3]
     app.ghostImgs = []
     for ghost in app.ghosts:
         app.ghostImgs.append(ghost.getImg())
@@ -80,6 +81,18 @@ def gameScreen_keyPressed(app, event):
     elif (event.key == "Right"):
         app.paused = False
         app.pacman.changeDir(0)
+    elif (event.key == "w"):
+        app.paused = False
+        app.playerGhost.changeDir(2)
+    elif (event.key == "s"):
+        app.paused = False
+        app.playerGhost.changeDir(3)
+    elif (event.key == "a"):
+        app.paused = False
+        app.playerGhost.changeDir(1)
+    elif (event.key == "d"):
+        app.paused = False
+        app.playerGhost.changeDir(0)
 
 def gameScreen_timerFired(app):
     if not app.paused:
@@ -105,7 +118,7 @@ def gameScreen_timerFired(app):
             app.board[app.pacman.pos[0]][app.pacman.pos[1]] = "O"
             app.powered = True
             app.poweredTime = time.time()
-        if time.time() > 5 + app.poweredTime:
+        if time.time() > 7 + app.poweredTime:
             app.powered = False
 
 def getCenter(app, pos):
