@@ -44,9 +44,7 @@ def threaded_client(conn, player):
     elif player == 2:
         conn.send(pacmanDir)
 player = 0
-while True:
-    conn, addr = s.accept()
-    player += 1
-    print("Connected to", addr)
-
-    start_new_thread(threaded_client, (conn,player))
+conn1, addr1 = s.accept()
+conn2, addr2 = s.accept()
+start_new_thread(threaded_client, (conn1,1))
+start_new_thread(threaded_client, (conn2,2))

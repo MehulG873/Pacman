@@ -88,8 +88,10 @@ def gameScreen_keyPressed(app, event):
         app.playerGhost.changeDir(0)  
 
 def gameScreen_timerFired(app):
+    app.paused = False
     if not app.paused:
         app.pacman.dir = int(app.network.send(str(app.playerGhost.dir)))
+
         app.pacmanImg = app.pacman.getImg()
         app.pacman.move()
         for i in range(len(app.ghosts)):
