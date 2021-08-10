@@ -75,19 +75,18 @@ def appStarted(app):
 ##############################################################################
 def gameScreen_keyPressed(app, event):
     if (event.key == "Up"):
-        app.paused = False
         app.pacman.changeDir(2)
     elif (event.key == "Down"):
-        app.paused = False
         app.pacman.changeDir(3)
     elif (event.key == "Left"):
-        app.paused = False
         app.pacman.changeDir(1)
     elif (event.key == "Right"):
-        app.paused = False
         app.pacman.changeDir(0)  
+    elif (event.key == "Space"):
+        app.network.send("Ready")
 
 def gameScreen_timerFired(app):
+
     if not app.paused:
         app.playerGhost.dir = int(app.network.send(str(app.pacman.dir)))
         app.pacmanImg = app.pacman.getImg()
@@ -114,6 +113,12 @@ def gameScreen_timerFired(app):
             app.poweredTime = time.time()
         if time.time() > 7 + app.poweredTime:
             app.powered = False
+    else:
+        data = app.network.send("Ready?")
+        if data == "True":
+            app.paused = False
+        else:
+            print(data)
 
 def getCenter(app, pos):
     cellWidth = app.width/21
