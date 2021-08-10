@@ -48,11 +48,16 @@ def appStarted(app):
     app.poweredTime = time.time()
     app.background = app.  scaleImage(app.loadImage(
         'SpriteSheet.png').crop((370, 3, 536, 216)), 3.5)
+    app.dot = app.scaleImage(app.loadImage(
+        'SpriteSheet.png').crop((3, 81, 5, 83)), 3.5)
+    app.blank = app.scaleImage(app.loadImage(
+        'SpriteSheet.png').crop((5, 81, 7, 83)), 3.5)
     app.pacman = Pacman(app, (20, 10))
     app.pacmanImg = app.pacman.getImg()
     app.title = app.scaleImage(app.loadImage(
         'SpriteSheet.png').crop((2, 4, 184, 50)), 2.75)
-    app.ghosts = [dijkstraGhost(app, (10, 10), 0), dijkstraGhost( app, (13, 13), 1), basicGhost(app, (15, 10), 2), basicGhost(app, (13, 7), 3)]
+    app.ghosts = [dijkstraGhost(app, (10, 10), 0), dijkstraGhost( app, (13, 13), 1), basicGhost(app, (15, 10), 2), playerGhost(app, (13, 7), 3)]
+    app.playerGhost = app.ghosts[3]
     app.ghostImgs = []
     for ghost in app.ghosts:
         app.ghostImgs.append(ghost.getImg())
@@ -76,6 +81,18 @@ def gameScreen_keyPressed(app, event):
     elif (event.key == "Right"):
         app.paused = False
         app.pacman.changeDir(0)
+    elif (event.key == "w"):
+        app.paused = False
+        app.playerGhost.changeDir(2)
+    elif (event.key == "s"):
+        app.paused = False
+        app.playerGhost.changeDir(3)
+    elif (event.key == "a"):
+        app.paused = False
+        app.playerGhost.changeDir(1)
+    elif (event.key == "d"):
+        app.paused = False
+        app.playerGhost.changeDir(0)
 
 def gameScreen_timerFired(app):
     if not app.paused:
@@ -101,7 +118,7 @@ def gameScreen_timerFired(app):
             app.board[app.pacman.pos[0]][app.pacman.pos[1]] = "O"
             app.powered = True
             app.poweredTime = time.time()
-        if time.time() > 5 + app.poweredTime:
+        if time.time() > 7 + app.poweredTime:
             app.powered = False
 
 def getCenter(app, pos):
@@ -125,6 +142,21 @@ def gameScreen_redrawAll(app, canvas):
         app.width/2, 910, text=f"Score: {app.score}", fill="white",
         font="Fixedsys 36 bold")
 
+def drawDots(app, canvas):
+    for row in range(len(app.board)):
+        for col in range(len(app.board[row])):
+            if (app.board[row][col] == " "):
+                canvas.create_rectangle(
+                    7 + (28 * col), 7 + (28 * row), 15 + (28 * col),
+                    15 + (28 * row), fill="white")
+            elif (app.board[row][col] == "P"):
+                canvas.create_oval(-3 + (28 * col), -3 + (28 * row),
+                                   25 + (28 * col), 25 + (28 * row),
+                                   fill="white", width=0)
+            else:
+                canvas.create_rectangle(
+                    7 + (28 * col), 7 + (28 * row), 15 + (28 * col),
+                    15 + (28 * row), fill="black")
 
 def drawGhosts(app, canvas):
     for i in range(len(app.ghosts)):

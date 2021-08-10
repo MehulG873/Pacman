@@ -11,10 +11,10 @@ class network:
         self.server = "192.168.1.66"
         self.port = 5555
         self.addr = (self.server, self.port)
-        self.app = self.connect()
+        self.otherDir = self.connect()
 
-    def getApp(self):
-        return self.app
+    def getOtherDir(self):
+        return self.otherDir
     def connect(self):
         try:
             self.client.connect(self.addr)
@@ -25,20 +25,11 @@ class network:
     def send(self, data):
         try:
             print(data)
-            self.client.send(pickle.dumps(data))
+            self.client.send(data.encode())
             print("sent")
         except socket.error as e:
             print(e)
         return self.receive()
     def receive(self):
-        length = int(self.client.recv(12).decode())
-        time.sleep(0.1)
-        data = b""
-        while len(data) < length - 2048:
-            x = self.client.recv(2048)
-            data += x
-        data += (self.client.recv(length - len(data)))
-        sendable = pickle.loads(data)
-        print("received")
-        return sendable
+        return self.client.recv(4096).decode()
 

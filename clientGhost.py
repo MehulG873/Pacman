@@ -67,6 +67,8 @@ def appStarted(app):
     app.timerDelay = 20
     app.score = 0
     app.paused = True
+    app.network = network.network()
+    app.pacman.dir = app.network.getOtherDir()
     
 ##############################################################################
 # Pacman Main Portion of the game
@@ -74,19 +76,20 @@ def appStarted(app):
 def gameScreen_keyPressed(app, event):
     if (event.key == "Up"):
         app.paused = False
-        app.pacman.changeDir(2)
+        app.playerGhost.changeDir(2)
     elif (event.key == "Down"):
         app.paused = False
-        app.pacman.changeDir(3)
+        app.playerGhost.changeDir(3)
     elif (event.key == "Left"):
         app.paused = False
-        app.pacman.changeDir(1)
+        app.playerGhost.changeDir(1)
     elif (event.key == "Right"):
         app.paused = False
-        app.pacman.changeDir(0)  
+        app.playerGhost.changeDir(0)  
 
 def gameScreen_timerFired(app):
     if not app.paused:
+        app.pacman.dir = int(app.network.send(str(app.playerGhost.dir)))
         app.pacmanImg = app.pacman.getImg()
         app.pacman.move()
         for i in range(len(app.ghosts)):

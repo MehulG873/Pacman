@@ -1,3 +1,11 @@
+from cmu_112_graphics import *
+import network
+import pickle
+import time
+from pacman import Pacman
+from ghost import *
+from datetime import date
+
 # Project: Pacman
 # AndrewUserId: mehulg
 # Date of Submission: 8/8
@@ -7,11 +15,6 @@
 
 
 ###############################################################################
-from cmu_112_graphics import *
-from pacman import Pacman
-from ghost import *
-import time
-from datetime import date
 
 def appStarted(app):
     app.mode = 'gameScreen'
@@ -64,6 +67,8 @@ def appStarted(app):
     app.timerDelay = 20
     app.score = 0
     app.paused = True
+    app.network = network.network()
+    app.playerGhost.dir = app.network.getOtherDir()
     
 ##############################################################################
 # Pacman Main Portion of the game
@@ -80,22 +85,11 @@ def gameScreen_keyPressed(app, event):
         app.pacman.changeDir(1)
     elif (event.key == "Right"):
         app.paused = False
-        app.pacman.changeDir(0)
-    elif (event.key == "w"):
-        app.paused = False
-        app.playerGhost.changeDir(2)
-    elif (event.key == "s"):
-        app.paused = False
-        app.playerGhost.changeDir(3)
-    elif (event.key == "a"):
-        app.paused = False
-        app.playerGhost.changeDir(1)
-    elif (event.key == "d"):
-        app.paused = False
-        app.playerGhost.changeDir(0)
+        app.pacman.changeDir(0)  
 
 def gameScreen_timerFired(app):
     if not app.paused:
+        app.playerGhost.dir = int(app.network.send(str(app.pacman.dir)))
         app.pacmanImg = app.pacman.getImg()
         app.pacman.move()
         for i in range(len(app.ghosts)):

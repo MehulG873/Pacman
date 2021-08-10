@@ -29,13 +29,18 @@ class Ghost:
         self.previousMoves = []
         self.app.scared = self.app.scaleImage(self.app.loadImage(
             'SpriteSheet.png').crop((3, 125 + 18 * 4, 17, 138 + 18 * 4)), 2.8)
+        self.app.scaredDone = self.app.scaleImage(self.app.loadImage(
+            'SpriteSheet.png').crop((37, 125 + 18 * 4, 51, 138 + 18 * 4)), 2.8)
 
     def nextSprite(self):
         self.spriteCount = (self.spriteCount + 1) % 2
 
     def getImg(self):
         if self.app.powered:
-            return self.app.scared
+            if time.time() < 5 + self.app.poweredTime:
+                return self.app.scared
+            else:
+                return self.app.scaredDone
         else:
             return self.spriteImages[(2 * self.dir) + self.spriteCount]
 
@@ -212,6 +217,42 @@ class basicGhost(Ghost):
                         {possibleMoves[key]}") """
             #print(maxDir)
             self.changeDir(maxDir)
+
+class playerGhost(Ghost):
+    def roundPos(self):
+        cellWidth = self.app.width/21
+        self.center = (((self.pos[1]+0.5) * cellWidth,
+                       (self.pos[0] + 0.5) * cellWidth))
+
+    def changeDir(self, newDir):
+        self.dir = newDir
+        self.roundPos()
+
+    def move(self):
+        dx, dy = 0, 0
+        if self.dir == 0:
+            dx = self.speed
+        elif self.dir == 1:
+            dx = -1 * self.speed
+        elif self.dir == 2:
+            dy = -1 * self.speed
+        else:
+            dy = self.speed
+        newPos = self.getPos((self.center[0] + dx, self.center[1] + dy))
+        if newPos[1] < 0 or newPos[1] >= len(self.app.board[0]):
+            if self.dir == 0:
+                newPos = (newPos[0], 0)
+            else:
+                newPos = (newPos[0], 20)
+            cellWidth = self.app.width/21
+            self.center = (((newPos[1]+0.5) * cellWidth,
+                           (newPos[0] + 0.5) * cellWidth))
+            self.pos = copy.copy(newPos)
+            return
+        if self.app.board[newPos[0]][newPos[1]] != "X":
+            self.center = (self.center[0] + dx, self.center[1] + dy)
+            self.pos = self.getPos(self.center)
+            self.nextSprite()
 
 class dijkstraGhost(Ghost):
     def __init__(self, app, pos, color):

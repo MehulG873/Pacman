@@ -22,70 +22,31 @@ except socket.error as e:
 
 s.listen()
 print("Waiting for a connection, Server Started")
+pacmanDir = 0
+ghostDir = 0
 
-def appStarted(app):
-    app.client1, addr = s.accept()
-    app.client2, addr = s.accept()
-    app.board = [["X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X"],
-                 ["X", " ", " ", " ", " ", " ", " ", " ", " ", " ", "X", " ", " ", " ", " ", " ", " ", " ", " ", " ", "X"],
-                 ["X", " ", "X", "X", "X", " ", "X", "X", "X", " ", "X", " ", "X", "X", "X", " ", "X", "X", "X", " ", "X"],
-                 ["X", "P", "X", "X", "X", " ", "X", "X", "X", " ", "X", " ", "X", "X", "X", " ", "X", "X", "X", "P", "X"],
-                 ["X", " ", "X", "X", "X", " ", "X", "X", "X", " ", "X", " ", "X", "X", "X", " ", "X", "X", "X", " ", "X"],
-                 ["X", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "X"],
-                 ["X", " ", "X", "X", "X", " ", "X", " ", "X", "X", "X", "X", "X", " ", "X", " ", "X", "X", "X", " ", "X"],
-                 ["X", " ", "X", "X", "X", " ", "X", " ", "X", "X", "X", "X", "X", " ", "X", " ", "X", "X", "X", " ", "X"],
-                 ["X", " ", " ", " ", " ", " ", "X", " ", " ", " ", "X", " ", " ", " ", "X", " ", " ", " ", " ", " ", "X"],
-                 ["X", "X", "X", "X", "X", " ", "X", "X", "X", "O", "X", "O", "X", "X", "X", " ", "X", "X", "X", "X", "X"],
-                 ["X", "X", "X", "X", "X", " ", "X", "O", "O", "O", "O", "O", "O", "O", "X", " ", "X", "X", "X", "X", "X"],
-                 ["X", "X", "X", "X", "X", " ", "X", "O", "X", "X", "X", "X", "X", "O", "X", " ", "X", "X", "X", "X", "X"],
-                 ["X", "X", "X", "X", "X", " ", "X", "O", "X", "X", "X", "X", "X", "O", "X", " ", "X", "X", "X", "X", "X"],
-                 ["O", "O", "O", "O", "O", " ", "O", "O", "X", "X", "X", "X", "X", "O", "O", " ", "O", "O", "O", "O", "O"],
-                 ["X", "X", "X", "X", "X", " ", "X", "O", "X", "X", "X", "X", "X", "O", "X", " ", "X", "X", "X", "X", "X"],
-                 ["X", "X", "X", "X", "X", " ", "X", "O", "O", "O", "O", "O", "O", "O", "X", " ", "X", "X", "X", "X", "X"],
-                 ["X", "X", "X", "X", "X", " ", "X", "O", "X", "X", "X", "X", "X", "O", "X", " ", "X", "X", "X", "X", "X"],
-                 ["X", "X", "X", "X", "X", " ", "X", " ", "X", "X", "X", "X", "X", " ", "X", " ", "X", "X", "X", "X", "X"],
-                 ["X", " ", " ", " ", " ", " ", " ", " ", " ", " ", "X", " ", " ", " ", " ", " ", " ", " ", " ", " ", "X"],
-                 ["X", " ", "X", "X", "X", " ", "X", "X", "X", " ", "X", " ", "X", "X", "X", " ", "X", "X", "X", " ", "X"],
-                 ["X", "P", " ", " ", "X", " ", " ", " ", " ", " ", "O", " ", " ", " ", " ", " ", "X", " ", " ", "P", "X"],
-                 ["X", "X", "X", " ", "X", " ", "X", " ", "X", "X", "X", "X", "X", " ", "X", " ", "X", " ", "X", "X", "X"],
-                 ["X", "X", "X", " ", "X", " ", "X", " ", "X", "X", "X", "X", "X", " ", "X", " ", "X", " ", "X", "X", "X"],
-                 ["X", " ", " ", " ", " ", " ", "X", " ", " ", " ", "X", " ", " ", " ", "X", " ", " ", " ", " ", " ", "X"],
-                 ["X", " ", "X", "X", "X", "X", "X", "X", "X", " ", "X", " ", "X", "X", "X", "X", "X", "X", "X", " ", "X"],
-                 ["X", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "X"],
-                 ["X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X"],
-                 ]
-    app.background = app.scaleImage(app.loadImage(
-        'SpriteSheet.png').crop((370, 3, 536, 216)), 3.5)
-    app.pacman = Pacman(app, (20, 10))
-    app.sendable = [app.board, app.pacman.getSendable()]
-    app.paused = True
-    sendSendable(app.client1, app)
-    sendSendable(app.client2, app)
+def threaded_client(conn, player):
+    global ghostDir
+    global pacmanDir
+    if player == 1:
+        conn.send(str(ghostDir).encode())
+        while True:
+            pacmanDir = int(conn.recv(4096).decode())
+            print(pacmanDir)
+            conn.send(str(ghostDir).encode())
+    if player == 2:
+        conn.send(str(pacmanDir).encode())
+        while True:
+            ghostDir = int(conn.recv(4096).decode())
+            print(pacmanDir)
+            conn.send(str(pacmanDir).encode())
 
+    elif player == 2:
+        conn.send(pacmanDir)
+player = 0
+while True:
+    conn, addr = s.accept()
+    player += 1
+    print("Connected to", addr)
 
-def sendSendable(conn, app):    
-    data = pickle.dumps(app.sendable)
-    conn.send(str(len(data)).encode())
-    conn.send(data)
-
-def timerFired(app):
-    event = pickle.loads(app.client1.recv(16384))
-    if (event == "Up"):
-        app.paused = False
-        app.pacman.changeDir(2)
-    elif (event == "Down"):
-        app.paused = False
-        app.pacman.changeDir(3)
-    elif (event == "Left"):
-        app.paused = False
-        app.pacman.changeDir(1)
-    elif (event == "Right"):
-        app.paused = False
-        app.pacman.changeDir(0)
-    event = pickle.loads(app.client2.recv(16384))
-    if not app.paused:
-        app.pacmanImg = app.pacman.getImg()
-        app.pacman.move()
-    sendSendable(app.client1, app)
-    sendSendable(app.client2, app)
-runApp(width=579, height=940)
+    start_new_thread(threaded_client, (conn,player))

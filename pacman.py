@@ -51,9 +51,6 @@ class Pacman:
         self.dir = newDir
         self.roundPos()
 
-    def getSendable(self):
-        return [self.getImg(), self.center]
-
     def move(self):
         dx, dy = 0, 0
         if self.dir == 0:
