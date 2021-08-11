@@ -68,7 +68,7 @@ def appStarted(app):
     app.score = 0
     app.paused = True
     app.network = network.network()
-    app.pacman.dir = app.network.getOtherDir()
+    app.pacman.dir = int(app.network.getOtherDir())
     app.send = [app.playerGhost.dir, app.playerGhost.center]
     
 ##############################################################################
@@ -92,8 +92,8 @@ def gameScreen_timerFired(app):
                     str(app.playerGhost.center)]
         app.received = (app.network.
         send(";".join(app.send)).split(";"))
-        if app.received != "0":
-            print(app.received)
+        if app.received != ['0']:
+            print(repr(app.received))
             unpackReceived(app, app.received)
         app.pacmanImg = app.pacman.getImg()
         app.pacman.move()
@@ -127,10 +127,10 @@ def gameScreen_timerFired(app):
             print(data)
 
 def unpackReceived(app, received):
-    print()
-    print(received)
+    print("UNPACKING\n")
+    print(repr(received))
     app.pacman.dir = eval(received[0])
-    print(received[0])
+    print(repr(received[0]))
     app.pacman.center = eval(received[1])
     app.ghosts[0].center = eval(received[2])
     app.ghosts[1].center = eval(received[3])
