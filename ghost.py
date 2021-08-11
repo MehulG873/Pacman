@@ -75,6 +75,7 @@ class Ghost:
         return targetPos
 
     def move(self):
+        self.pos = self.getPos(self.center)
         self.evaluateDirection()
         dx, dy = 0, 0
         if self.dir == 0:
@@ -229,6 +230,7 @@ class playerGhost(Ghost):
         self.roundPos()
 
     def move(self):
+        self.pos = self.getPos(self.center)
         dx, dy = 0, 0
         if self.dir == 0:
             dx = self.speed

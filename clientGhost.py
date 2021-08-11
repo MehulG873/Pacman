@@ -69,6 +69,7 @@ def appStarted(app):
     app.paused = True
     app.network = network.network()
     app.pacman.dir = app.network.getOtherDir()
+    app.send = [app.playerGhost.dir, app.playerGhost.center]
     
 ##############################################################################
 # Pacman Main Portion of the game
@@ -87,7 +88,13 @@ def gameScreen_keyPressed(app, event):
 
 def gameScreen_timerFired(app):
     if not app.paused:
-        app.pacman.dir = int(app.network.send(str(app.playerGhost.dir)))
+        app.send = [str(app.playerGhost.dir),
+                    str(app.playerGhost.center)]
+        app.received = (app.network.
+        send(";".join(app.send)).split(";"))
+        if app.received != "0":
+            print(app.received)
+            unpackReceived(app, app.received)
         app.pacmanImg = app.pacman.getImg()
         app.pacman.move()
         for i in range(len(app.ghosts)):
@@ -118,6 +125,16 @@ def gameScreen_timerFired(app):
             app.paused = False
         else:
             print(data)
+
+def unpackReceived(app, received):
+    print()
+    print(received)
+    app.pacman.dir = eval(received[0])
+    print(received[0])
+    app.pacman.center = eval(received[1])
+    app.ghosts[0].center = eval(received[2])
+    app.ghosts[1].center = eval(received[3])
+    app.ghosts[2].center = eval(received[4])
 
 def getCenter(app, pos):
     cellWidth = app.width/21

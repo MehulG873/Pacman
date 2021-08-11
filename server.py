@@ -22,20 +22,22 @@ except socket.error as e:
 
 s.listen()
 print("Waiting for a connection, Server Started")
-pacmanDir = 0
-ghostDir = 0
+ghostDir = "0"
 pacmanReady = False
-ghostReady = True
+ghostReady = False
+ghostCenter = "0"
+ghostSend = "0"
 
 def threaded_client(conn, player):
     global ghostDir
-    global pacmanDir
+    global ghostSend
     global pacmanReady
-    global ghostReady   
-    if player == 1:
-        conn.send(str(ghostDir).encode())
+    global ghostReady
+    global ghostCenter   
+    if player == 1:     
+        conn.send(str(0).encode())
         while True:
-            data = (conn.recv(4096).decode())
+            data = (conn.recv(128).decode())
             if data == "Ready":
                 pacmanReady = True
                 conn.send("ok".encode())
@@ -43,13 +45,12 @@ def threaded_client(conn, player):
                 conn.send(str(pacmanReady and
                               ghostReady).encode())
             else:
-                pacmanDir = int(data)                
-                print(pacmanDir)
-                conn.send(str(ghostDir).encode())
+                ghostSend = data 
+                conn.send(";".join([ghostDir, ghostCenter]).encode())
     if player == 2:
-        conn.send(str(pacmanDir).encode())
+        conn.send(str(0).encode())
         while True:
-            data = (conn.recv(4096).decode())
+            data = (conn.recv(128).decode())
             if data == "Ready":
                 ghostReady = True
                 conn.send("ok".encode())
@@ -57,9 +58,10 @@ def threaded_client(conn, player):
                 conn.send(str(pacmanReady and
                               ghostReady).encode())
             else:
-                ghostDir = int(data)                
-                print(ghostDir)
-                conn.send(str(pacmanDir).encode())
+                ghostDir, ghostCenter = data.split(";")                
+                print("STUCK:" + ghostDir)
+                print(len(ghostSend.encode()))
+                conn.send(ghostSend.encode())
 
     elif player == 2:
         conn.send(pacmanDir)

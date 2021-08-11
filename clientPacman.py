@@ -69,6 +69,7 @@ def appStarted(app):
     app.paused = True
     app.network = network.network()
     app.playerGhost.dir = app.network.getOtherDir()
+    app.send = [str(app.pacman.dir), str(app.pacman.center)]
     
 ##############################################################################
 # Pacman Main Portion of the game
@@ -88,7 +89,16 @@ def gameScreen_keyPressed(app, event):
 def gameScreen_timerFired(app):
 
     if not app.paused:
-        app.playerGhost.dir = int(app.network.send(str(app.pacman.dir)))
+        app.send = [str(app.pacman.dir), str(app.pacman.center),
+                    str(app.ghosts[0].center),str(app.ghosts[1].center),
+                    str(app.ghosts[2].center)]
+        data = (app.network.
+        send(";".join(app.send)))
+        app.playerGhost.dir, center = data.split(";")
+        print(app.playerGhost.dir)
+        app.playerGhost.dir = eval(app.playerGhost.dir)
+        if (center != "0"):
+            app.playerGhost.center = eval(center)
         app.pacmanImg = app.pacman.getImg()
         app.pacman.move()
         for i in range(len(app.ghosts)):

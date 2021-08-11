@@ -52,6 +52,7 @@ class Pacman:
         self.roundPos()
 
     def move(self):
+        self.pos = self.getPos(self.center)
         dx, dy = 0, 0
         if self.dir == 0:
             dx = self.speed
