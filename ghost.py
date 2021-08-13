@@ -16,7 +16,7 @@ class Ghost:
         self.spriteImages = [
             self.app.scaleImage(self.app.loadImage('SpriteSheet.png').crop(
                 (3 + 17 * i, 125 + 18 * color, 17 + 17*i, 138 + 18 * color)),
-                2.8) for i in range(8)
+                2) for i in range(8)
         ]
         self.targetDir = "None"
         if self.color == 1:
@@ -24,13 +24,13 @@ class Ghost:
         elif self.color == 2:
             self.targetDir = "Backward"
         cellWidth = app.width/21
-        self.center = (((pos[1]+0.5) * cellWidth, (pos[0] + 0.5) * cellWidth))
+        self.center = (((pos[1]+0.5) * cellWidth, (pos[0] + 0.7) * cellWidth))
         self.speed = 7 + color
         self.previousMoves = []
         self.app.scared = self.app.scaleImage(self.app.loadImage(
-            'SpriteSheet.png').crop((3, 125 + 18 * 4, 17, 138 + 18 * 4)), 2.8)
+            'SpriteSheet.png').crop((3, 125 + 18 * 4, 17, 138 + 18 * 4)), 2)
         self.app.scaredDone = self.app.scaleImage(self.app.loadImage(
-            'SpriteSheet.png').crop((37, 125 + 18 * 4, 51, 138 + 18 * 4)), 2.8)
+            'SpriteSheet.png').crop((37, 125 + 18 * 4, 51, 138 + 18 * 4)), 2)
 
     def nextSprite(self):
         self.spriteCount = (self.spriteCount + 1) % 2
@@ -45,8 +45,8 @@ class Ghost:
             return self.spriteImages[(2 * self.dir) + self.spriteCount]
 
     def getPos(self, cord):
-        row = round((cord[1]-7)/28)
-        col = round((cord[0]-7)/28)
+        row = round((cord[1]-5)/24)
+        col = round((cord[0]-5)/24)
         return row, col
 
     def changeDir(self, newDir):
@@ -115,7 +115,7 @@ class Ghost:
         self.pos = self.initPos
         cellWidth = self.app.width/21
         self.center = (((self.pos[1]+0.5) * cellWidth,
-                       (self.pos[0] + 0.5) * cellWidth))
+                       (self.pos[0] + 0.7) * cellWidth))
 
 class randomGhost(Ghost):
     def evaluateDirection(self):
@@ -222,7 +222,7 @@ class playerGhost(Ghost):
     def roundPos(self):
         cellWidth = self.app.width/21
         self.center = (((self.pos[1]+0.5) * cellWidth,
-                       (self.pos[0] + 0.5) * cellWidth))
+                       (self.pos[0] + 0.7) * cellWidth))
 
     def changeDir(self, newDir):
         self.dir = newDir
@@ -266,6 +266,7 @@ class dijkstraGhost(Ghost):
                 self.bestNode = node.shortestDijkstra(self.graph, self.graph[self.pos], 
                                           self.graph[targetPos])
             else:
+
                 self.bestNode = node.shortestDijkstra(self.graph, self.graph[self.pos], 
                                           self.graph[self.app.pacman.pos])
         else:

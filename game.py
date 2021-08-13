@@ -48,7 +48,7 @@ def appStarted(app):
                  ]
     app.poweredTime = time.time()
     app.background = app.  scaleImage(app.loadImage(
-        'SpriteSheet.png').crop((370, 3, 536, 216)), 3)
+        'SpriteSheet.png').crop((370, 3, 530, 216)), 3)
     app.dot = app.scaleImage(app.loadImage(
         'SpriteSheet.png').crop((3, 81, 5, 83)), 3)
     app.blank = app.scaleImage(app.loadImage(
@@ -174,10 +174,10 @@ def singlePlayer_redrawAll(app, canvas):
         app.pacmanImg), anchor="c")
     singlePlayer_drawGhosts(app, canvas)
     canvas.create_image(
-        app.width/2, 757, image=ImageTk.PhotoImage(app.title), anchor="n")
+        app.width/2, 650, image=ImageTk.PhotoImage(app.title), anchor="n")
     canvas.create_text(
-        app.width/2, 910, text=f"Score: {app.score}", fill="white",
-        font="Fixedsys 36 bold")
+        app.width/2, 800, text=f"Score: {app.score}", fill="white",
+        font="Fixedsys 30 bold")
 
 def singlePlayer_drawDots(app, canvas):
     for row in range(len(app.board)):
@@ -279,7 +279,7 @@ def pacmanMulti_redrawAll(app, canvas):
         app.width/2, 757, image=ImageTk.PhotoImage(app.title), anchor="n")
     canvas.create_text(
         app.width/2, 910, text=f"Score: {app.score}", fill="white",
-        font="Fixedsys 36 bold")
+        font="Fixedsys 30 bold")
 
 def pacmanMulti_drawDots(app, canvas):
     for row in range(len(app.board)):
@@ -387,7 +387,7 @@ def ghostMulti_redrawAll(app, canvas):
         app.width/2, 757, image=ImageTk.PhotoImage(app.title), anchor="n")
     canvas.create_text(
         app.width/2, 910, text=f"Score: {app.score}", fill="white",
-        font="Fixedsys 36 bold")
+        font="Fixedsys 30 bold")
 
 def ghostMulti_drawDots(app, canvas):
     for row in range(len(app.board)):
@@ -425,7 +425,7 @@ def endScreen_redrawAll(app, canvas):
                     font="Fixedsys 96 bold", fill = "white")
     if (app.scores != None):
         canvas.create_text(app.width/2, app.height/3, text=f"Score: {app.score}",
-                       font="Fixedsys 36 bold", fill = "white")
+                       font="Fixedsys 30 bold", fill = "white")
         canvas.create_text(app.width/2, app.height/3 + 50,
                         text = f"Highscores", font="Fixedsys 24",
                         fill = 'white', anchor = "n")
@@ -437,7 +437,7 @@ def endScreen_redrawAll(app, canvas):
             i += 1
         if app.score in app.scores and app.scores[app.score] == date.today().strftime("%B %d, %Y"):
             canvas.create_text(app.width/2, 2 * app.height/3,
-                            text = "NEW HIGHSCORE", font="Fixedsys 36",
+                            text = "NEW HIGHSCORE", font="Fixedsys 30",
                             fill = 'white', anchor = "n")
 
     else:

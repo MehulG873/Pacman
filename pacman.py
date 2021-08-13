@@ -11,21 +11,21 @@ class Pacman:
         self.spriteCount = 0
         self.spriteImages = [
             self.app.scaleImage(self.app.loadImage(
-                'SpriteSheet.png').crop((20, 91, 32, 104)), 2.8),
+                'SpriteSheet.png').crop((20, 91, 32, 104)), 2),
             self.app.scaleImage(self.app.loadImage(
-                'SpriteSheet.png').crop((35, 91, 44, 104)), 2.8),
+                'SpriteSheet.png').crop((35, 91, 44, 104)), 2),
             self.app.scaleImage(self.app.loadImage(
-                'SpriteSheet.png').crop((48, 91, 60, 104)), 2.8),
+                'SpriteSheet.png').crop((48, 91, 60, 104)), 2),
             self.app.scaleImage(self.app.loadImage(
-                'SpriteSheet.png').crop((63, 91, 72, 104)), 2.8),
+                'SpriteSheet.png').crop((63, 91, 72, 104)), 2),
             self.app.scaleImage(self.app.loadImage(
-                'SpriteSheet.png').crop((76, 91, 89, 104)), 2.8),
+                'SpriteSheet.png').crop((76, 91, 89, 104)), 2),
             self.app.scaleImage(self.app.loadImage(
-                'SpriteSheet.png').crop((93, 91, 106, 104)), 2.8),
+                'SpriteSheet.png').crop((93, 91, 106, 104)), 2),
             self.app.scaleImage(self.app.loadImage(
-                'SpriteSheet.png').crop((110, 91, 123, 104)), 2.8),
+                'SpriteSheet.png').crop((110, 91, 123, 104)), 2),
             self.app.scaleImage(self.app.loadImage(
-                'SpriteSheet.png').crop((127, 91, 140, 104)), 2.8)
+                'SpriteSheet.png').crop((127, 91, 140, 104)), 2)
         ]
         cellWidth = app.width/21
         self.center = (((pos[1]+0.5) * cellWidth, (pos[0] + 0.5) * cellWidth))
@@ -43,8 +43,8 @@ class Pacman:
                        (self.pos[0] + 0.5) * cellWidth))
 
     def getPos(self, cord):
-        row = round((cord[1]-7)/28)
-        col = round((cord[0]-7)/28)
+        row = round((cord[1]-5)/24)
+        col = round((cord[0]-5)/24)
         return row, col
 
     def changeDir(self, newDir):
