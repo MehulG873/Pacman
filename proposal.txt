@@ -38,3 +38,9 @@ VERSION CONTROL PLAN
 https://github.com/MehulG873/Pacman 
     Link to Image of Change:
 https://drive.google.com/file/d/1mQOtFKnAqH6J8ExJo-UtuBnA8RKBi5Ey/view?usp=sharing 
+
+TP2 UPDATE
+    I finalized the four types of ghosts that I woudl be using, Random Choosing, Greedy, A*, and Player Controlled. In addition four files were created called Sever.py, Network.py, clientGhost.py, clientPacman.py each of them helping out the client to connecting to a multiplayer server.
+
+TP3 UPDATE
+    I finished up all the User Interface and added a home screen to my project.

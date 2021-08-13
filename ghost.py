@@ -1,9 +1,12 @@
+# Creates all types of Ghost Classes
+
 from cmu_112_graphics import *
 from PIL import Image
 import random
 import copy
 import time
 import node
+
 
 class Ghost:
     def __init__(self, app, pos, color):
@@ -117,9 +120,11 @@ class Ghost:
         self.center = (((self.pos[1]+0.5) * cellWidth,
                        (self.pos[0] + 0.7) * cellWidth))
 
+
 class randomGhost(Ghost):
     def evaluateDirection(self):
         self.changeDir(random.randint(0, 3))
+
 
 class basicGhost(Ghost):
     def evaluateDirection(self):
@@ -215,8 +220,9 @@ class basicGhost(Ghost):
                 else:
                     """ print(f"Key: {key} MaxDir: {maxDir} Distance:
                         {possibleMoves[key]}") """
-            #print(maxDir)
+            # print(maxDir)
             self.changeDir(maxDir)
+
 
 class playerGhost(Ghost):
     def roundPos(self):
@@ -255,27 +261,29 @@ class playerGhost(Ghost):
             self.pos = self.getPos(self.center)
             self.nextSprite()
 
+
 class dijkstraGhost(Ghost):
     def __init__(self, app, pos, color):
         super().__init__(app, pos, color)
         self.graph = node.generateGraph(app.board)
+
     def evaluateDirection(self):
         targetPos = self.getTargetPos()
         if not self.app.powered:
             if targetPos in self.graph:
-                self.bestNode = node.shortestDijkstra(self.graph, self.graph[self.pos], 
-                                          self.graph[targetPos])
+                self.bestNode = node.shortestDijkstra(self.graph, self.graph[self.pos],
+                                                      self.graph[targetPos])
             else:
 
-                self.bestNode = node.shortestDijkstra(self.graph, self.graph[self.pos], 
-                                          self.graph[self.app.pacman.pos])
+                self.bestNode = node.shortestDijkstra(self.graph, self.graph[self.pos],
+                                                      self.graph[self.app.pacman.pos])
         else:
             if targetPos in self.graph:
-                self.bestNode = node.longestDijkstra(self.graph, self.graph[self.pos], 
-                                          self.graph[targetPos])
+                self.bestNode = node.longestDijkstra(self.graph, self.graph[self.pos],
+                                                     self.graph[targetPos])
             else:
-                self.bestNode = node.longestDijkstra(self.graph, self.graph[self.pos], 
-                                          self.graph[self.app.pacman.pos])
+                self.bestNode = node.longestDijkstra(self.graph, self.graph[self.pos],
+                                                     self.graph[self.app.pacman.pos])
         direction = self.dir
         if (self.pos[0] > self.bestNode.pos[0]):
             direction = 2

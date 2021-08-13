@@ -1,10 +1,15 @@
+# Modified from previous code
+# Github Link:https://github.com/kgabc/Explore-Conquest
+# The Purpose of this file is to assist game.py in creating a connection with a server
+
+
 import socket
 import json
 import pickle
 import ast
 import time
 
-#####Previous Code
+
 class network:
     def __init__(self):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -15,6 +20,7 @@ class network:
 
     def getOtherDir(self):
         return self.otherDir
+
     def connect(self):
         try:
             self.client.connect(self.addr)
@@ -30,8 +36,8 @@ class network:
         except socket.error as e:
             print(e)
         return self.receive()
+
     def receive(self):
         data = self.client.recv(256).decode()
         print(data)
         return data
-
