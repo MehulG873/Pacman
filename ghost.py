@@ -170,7 +170,7 @@ class basicGhost(Ghost):
                         {possibleMoves[key]}") """
             self.changeDir(minDir)
         else:
-            self.speed = 9 + self.color
+            self.speed = 8 + self.color
             possibleDirections = []
             for x in range(-1, 2, 2):
                 if (self.pos[1] + x >= 0 and self.pos[1] + x <= 20 and

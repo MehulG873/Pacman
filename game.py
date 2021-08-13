@@ -453,7 +453,7 @@ def convertScores(app):
        app.scores[int(line[:line.index(":")])] = line[line.index(" ") + 1:]
 def addScore(app):
     #Line 194 date module from https://www.programiz.com/python-programming/datetime/current-datetime 
-    app.scores[app.score] = date.today().strftime("%B %d, %Y")
+    app.scores[app.score] = date.today().strftime("%B %d, %Y") + "\n"
     print(app.scores)
     bestScores = []
     app.isHighScore = True
@@ -472,7 +472,7 @@ def addScore(app):
     bestScores.sort(reverse = True)
     scoresFile = open("scores.txt", "w")
     for score in bestScores:
-        scoresFile.write(f"{score}: {app.scores[score]}\n")
+        scoresFile.write(f"{score}: {app.scores[score]}")
 
 ##############################################################################
 
