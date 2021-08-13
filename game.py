@@ -274,6 +274,9 @@ def pacmanMulti_keyPressed(app, event):
 
 def pacmanMulti_timerFired(app):
     if not app.paused:
+        app.send = [str(app.pacman.dir), str(app.pacman.center),
+                    str(app.ghosts[0].center), str(app.ghosts[1].center),
+                    str(app.ghosts[2].center), str(app.score)]
         data = (app.network.
                 send(";".join(app.send)))
         print(f"Data = {data}")
