@@ -19,6 +19,9 @@ Click the Pacman Multiplayer first otherwise the game will crash.
 Modules that need to be installed:
 All requirements for cmu_112_graphics.py
 Pickle by using this command: pip3 install Pickle
+Pygame also need to be installed. First try pip3 install pygame.
+If that does not work follow this guide:
+https://www.pygame.org/wiki/GettingStarted 
 Anyothers from this list that are not already installed:
 import socket
 from _thread import *

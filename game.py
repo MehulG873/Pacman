@@ -86,7 +86,7 @@ def appStarted(app):
     app.pacmanImg = app.pacman.getImg()
     app.title = app.scaleImage(app.loadImage(
         'SpriteSheet.png').crop((2, 4, 184, 50)), 2.6)
-    app.ghosts = [dijkstraGhost(app, (10, 10), 0), dijkstraGhost(
+    app.ghosts = [randomGhost(app, (10, 10), 0), basicGhost(
         app, (13, 13), 1), dijkstraGhost(app, (15, 10), 2), dijkstraGhost(app, (13, 7), 3)]
     app.playerGhost = app.ghosts[3]
     app.ghostImgs = []
@@ -146,7 +146,7 @@ def homeScreen_mousePressed(app, event):
             app.playerGhost.dir = app.network.getOtherDir()
             app.send = [app.pacman.dir, app.pacman.center]
             app.mode = 'pacmanMulti'
-        elif (600 < event.y < 700): 
+        elif (600 < event.y < 700):
             app.playerGhost = playerGhost(app, (13, 7), 3)
             app.ghosts[3] = app.playerGhost
             for ghost in app.ghosts:
