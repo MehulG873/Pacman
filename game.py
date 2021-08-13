@@ -12,9 +12,10 @@ from pacman import Pacman
 from ghost import *
 import time
 from datetime import date
+import network
 
 def appStarted(app):
-    app.mode = 'gameScreen'
+    app.mode = 'homeScreen'
     app.powered = False
     app.scores = None
     app.board = [["X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X"],
@@ -47,16 +48,16 @@ def appStarted(app):
                  ]
     app.poweredTime = time.time()
     app.background = app.  scaleImage(app.loadImage(
-        'SpriteSheet.png').crop((370, 3, 536, 216)), 3.5)
+        'SpriteSheet.png').crop((370, 3, 536, 216)), 3)
     app.dot = app.scaleImage(app.loadImage(
-        'SpriteSheet.png').crop((3, 81, 5, 83)), 3.5)
+        'SpriteSheet.png').crop((3, 81, 5, 83)), 3)
     app.blank = app.scaleImage(app.loadImage(
-        'SpriteSheet.png').crop((5, 81, 7, 83)), 3.5)
+        'SpriteSheet.png').crop((5, 81, 7, 83)), 3)
     app.pacman = Pacman(app, (20, 10))
     app.pacmanImg = app.pacman.getImg()
     app.title = app.scaleImage(app.loadImage(
-        'SpriteSheet.png').crop((2, 4, 184, 50)), 2.75)
-    app.ghosts = [dijkstraGhost(app, (10, 10), 0), dijkstraGhost( app, (13, 13), 1), basicGhost(app, (15, 10), 2), playerGhost(app, (13, 7), 3)]
+        'SpriteSheet.png').crop((2, 4, 184, 50)), 2.6)
+    app.ghosts = [dijkstraGhost(app, (10, 10), 0), dijkstraGhost( app, (13, 13), 1), dijkstraGhost(app, (15, 10), 2), dijkstraGhost(app, (13, 7), 3)]
     app.playerGhost = app.ghosts[3]
     app.ghostImgs = []
     for ghost in app.ghosts:
@@ -64,11 +65,59 @@ def appStarted(app):
     app.timerDelay = 20
     app.score = 0
     app.paused = True
-    
+##############################################################################
+# Home Screen Main Portion of the game
+##############################################################################
+def homeScreen_redrawAll(app, canvas):
+    canvas.create_rectangle(-10, -10, app.width + 10,
+                            app.height + 10, fill="black")
+    canvas.create_image(
+        app.width/2, 10, image=ImageTk.PhotoImage(app.title), anchor="n")
+    canvas.create_text(app.width/2, 140, text = "-MEHUL GOEL", anchor = "n", fill = "white", font="Fixedsys 30 bold")
+
+    #Draw SinglePlayer
+    canvas.create_rectangle(50, 250, app.width - 50, 350, fill = "gold")
+    canvas.create_text(app.width/2, 300, text = "SINGLE PLAYER", anchor = "c", fill = "white", font="Fixedsys 30 bold")
+
+    #Draw PacmanMultiplayer
+    canvas.create_rectangle(50, 425, app.width - 50, 525, fill = "orange")
+    canvas.create_text(app.width/2, 475, text = "PACMAN MULTI", anchor = "c", fill = "white", font="Fixedsys 30 bold")
+
+    #Draw SinglePlayer
+    canvas.create_rectangle(50, 600, app.width - 50, 700, fill = "OrangeRed")
+    canvas.create_text(app.width/2, 650, text = "GHOST MULTI", anchor = "c", fill = "white", font="Fixedsys 30 bold")
+
+def homeScreen_mousePressed(app, event):
+    if (50 < event.x < app.width - 50):
+        if (250 < event.y < 350):
+            app.mode = 'singlePlayer' 
+        elif (425 < event.y < 525):
+            app.playerGhost = playerGhost(app, (13, 7), 3)
+            app.ghosts[3] = app.playerGhost
+            for ghost in app.ghosts:
+                app.ghostImgs.append(ghost.getImg())
+            app.network = network.network()
+            app.playerGhost.dir = app.network.getOtherDir()
+            app.send = [str(app.pacman.dir), str(app.pacman.center)]
+            app.mode = 'pacmanMulti' 
+        elif (600 < event.y < 700):
+            app.playerGhost = playerGhost(app, (13, 7), 3)
+            app.ghosts[3] = app.playerGhost
+            for ghost in app.ghosts:
+                app.ghostImgs.append(ghost.getImg())
+            app.network = network.network()
+            app.pacman.dir = int(app.network.getOtherDir())
+            app.send = [str(app.playerGhost.dir), str(app.playerGhost.center)]
+            app.mode = 'ghostMulti' 
+
+
+
+
+
 ##############################################################################
 # Pacman Main Portion of the game
 ##############################################################################
-def gameScreen_keyPressed(app, event):
+def singlePlayer_keyPressed(app, event):
     if (event.key == "Up"):
         app.paused = False
         app.pacman.changeDir(2)
@@ -81,20 +130,8 @@ def gameScreen_keyPressed(app, event):
     elif (event.key == "Right"):
         app.paused = False
         app.pacman.changeDir(0)
-    elif (event.key == "w"):
-        app.paused = False
-        app.playerGhost.changeDir(2)
-    elif (event.key == "s"):
-        app.paused = False
-        app.playerGhost.changeDir(3)
-    elif (event.key == "a"):
-        app.paused = False
-        app.playerGhost.changeDir(1)
-    elif (event.key == "d"):
-        app.paused = False
-        app.playerGhost.changeDir(0)
 
-def gameScreen_timerFired(app):
+def singlePlayer_timerFired(app):
     if not app.paused:
         app.pacmanImg = app.pacman.getImg()
         app.pacman.move()
@@ -121,44 +158,254 @@ def gameScreen_timerFired(app):
         if time.time() > 7 + app.poweredTime:
             app.powered = False
 
-def getCenter(app, pos):
+def singlePlayer_getCenter(app, pos):
     cellWidth = app.width/21
     return ((pos[1]-0.5) * cellWidth, (pos[0] - 0.5) * cellWidth)
 
-def gameScreen_redrawAll(app, canvas):
+def singlePlayer_redrawAll(app, canvas):
     canvas.create_rectangle(-10, -10, app.width + 10,
                             app.height + 10, fill="black")
     canvas.create_image(
         0, 0, image=ImageTk.PhotoImage(app.background), anchor="nw")
-    drawDots(app, canvas)
+    singlePlayer_drawDots(app, canvas)
     # drawPacman
     x, y = app.pacman.center
     canvas.create_image(x, y, image=ImageTk.PhotoImage(
         app.pacmanImg), anchor="c")
-    drawGhosts(app, canvas)
+    singlePlayer_drawGhosts(app, canvas)
     canvas.create_image(
         app.width/2, 757, image=ImageTk.PhotoImage(app.title), anchor="n")
     canvas.create_text(
         app.width/2, 910, text=f"Score: {app.score}", fill="white",
         font="Fixedsys 36 bold")
 
-def drawDots(app, canvas):
+def singlePlayer_drawDots(app, canvas):
     for row in range(len(app.board)):
         for col in range(len(app.board[row])):
             if (app.board[row][col] == " "):
                 canvas.create_rectangle(
-                    7 + (28 * col), 7 + (28 * row), 15 + (28 * col),
-                    15 + (28 * row), fill="white")
+                    5 + (24 * col), 5 + (24 * row), 13 + (24 * col),
+                    13 + (24 * row), fill="white")
             elif (app.board[row][col] == "P"):
-                canvas.create_oval(-3 + (28 * col), -3 + (28 * row),
-                                   25 + (28 * col), 25 + (28 * row),
+                canvas.create_oval(-1 + (24 * col), -1 + (24 * row),
+                                   23 + (24 * col), 23 + (24 * row),
                                    fill="white", width=0)
             else:
                 canvas.create_rectangle(
-                    7 + (28 * col), 7 + (28 * row), 15 + (28 * col),
-                    15 + (28 * row), fill="black")
+                    5 + (24 * col), 5 + (24 * row), 13 + (24 * col),
+                    13 + (24 * row), fill="black")
 
-def drawGhosts(app, canvas):
+def singlePlayer_drawGhosts(app, canvas):
+    for i in range(len(app.ghosts)):
+        x, y = app.ghosts[i].center
+        canvas.create_image(x, y, image=ImageTk.PhotoImage(
+            app.ghostImgs[i]), anchor="c")
+
+##############################################################################
+#Pacman Multiplayer
+##############################################################################
+def pacmanMulti_keyPressed(app, event):
+    if (event.key == "Up"):
+        app.pacman.changeDir(2)
+    elif (event.key == "Down"):
+        app.pacman.changeDir(3)
+    elif (event.key == "Left"):
+        app.pacman.changeDir(1)
+    elif (event.key == "Right"):
+        app.pacman.changeDir(0)  
+    elif (event.key == "Space"):
+        app.network.send("Ready")
+
+def pacmanMulti_timerFired(app):
+
+    if not app.paused:
+        app.send = [str(app.pacman.dir), str(app.pacman.center),
+                    str(app.ghosts[0].center),str(app.ghosts[1].center),
+                    str(app.ghosts[2].center), app.score]
+        data = (app.network.
+        send(";".join(app.send)))
+        app.playerGhost.dir, center = data.split(";")
+        print(app.playerGhost.dir)
+        app.playerGhost.dir = eval(app.playerGhost.dir)
+        if (center != "0"):
+            app.playerGhost.center = eval(center)
+        app.pacmanImg = app.pacman.getImg()
+        app.pacman.move()
+        for i in range(len(app.ghosts)):
+            app.ghostImgs[i] = app.ghosts[i].getImg()
+            app.ghosts[i].nextSprite()
+            app.ghosts[i].move()
+            if (app.pacman.pos == app.ghosts[i].pos):
+                if app.powered:
+                    app.ghosts[i].reset()
+                    app.score += 50
+                else:
+                    #time.sleep(3)
+                    app.mode = "endScreen"
+        # app.pacman.nextSprite()
+        if (app.board[app.pacman.pos[0]][app.pacman.pos[1]] == " "):
+            app.score += 1
+            app.board[app.pacman.pos[0]][app.pacman.pos[1]] = "O"
+        elif (app.board[app.pacman.pos[0]][app.pacman.pos[1]] == "P"):
+            app.score += 10
+            app.board[app.pacman.pos[0]][app.pacman.pos[1]] = "O"
+            app.powered = True
+            app.poweredTime = time.time()
+        if time.time() > 7 + app.poweredTime:
+            app.powered = False
+    else:
+        data = app.network.send("Ready?")
+        if data == "True":
+            app.paused = False
+        else:
+            print(data)
+
+def pacmanMulti_getCenter(app, pos):
+    cellWidth = app.width/21
+    return ((pos[1]-0.5) * cellWidth, (pos[0] - 0.5) * cellWidth)
+
+def pacmanMulti_redrawAll(app, canvas):
+    canvas.create_rectangle(-10, -10, app.width + 10,
+                            app.height + 10, fill="black")
+    canvas.create_image(
+        0, 0, image=ImageTk.PhotoImage(app.background), anchor="nw")
+    pacmanMulti_drawDots(app, canvas)
+    # drawPacman
+    x, y = app.pacman.center
+    canvas.create_image(x, y, image=ImageTk.PhotoImage(
+        app.pacmanImg), anchor="c")
+    pacmanMulti_drawGhosts(app, canvas)
+    canvas.create_image(
+        app.width/2, 757, image=ImageTk.PhotoImage(app.title), anchor="n")
+    canvas.create_text(
+        app.width/2, 910, text=f"Score: {app.score}", fill="white",
+        font="Fixedsys 36 bold")
+
+def pacmanMulti_drawDots(app, canvas):
+    for row in range(len(app.board)):
+        for col in range(len(app.board[row])):
+            if (app.board[row][col] == " "):
+                canvas.create_rectangle(
+                    5 + (24 * col), 5 + (24 * row), 13 + (24 * col),
+                    13 + (24 * row), fill="white")
+            elif (app.board[row][col] == "P"):
+                canvas.create_oval(-1 + (24 * col), -1 + (24 * row),
+                                   23 +  (24 * col), 23 +  (24 * row),
+                                   fill="white", width=0)
+            else:
+                canvas.create_rectangle(
+                    5 + (24 * col), 5 + (24 * row), 13 + (24 * col),
+                    13 + (24 * row), fill="black")
+
+def pacmanMulti_drawGhosts(app, canvas):
+    for i in range(len(app.ghosts)):
+        x, y = app.ghosts[i].center
+        canvas.create_image(x, y, image=ImageTk.PhotoImage(
+            app.ghostImgs[i]), anchor="c")
+##############################################################################
+#Ghost Multiplayer
+##############################################################################
+def ghostMulti_keyPressed(app, event):
+    if (event.key == "Up"):
+        app.playerGhost.changeDir(2)
+    elif (event.key == "Down"):
+        app.playerGhost.changeDir(3)
+    elif (event.key == "Left"):
+        app.playerGhost.changeDir(1)
+    elif (event.key == "Right"):
+        app.playerGhost.changeDir(0)  
+    elif (event.key == "Space"):
+        app.network.send("Ready")
+
+def ghostMulti_timerFired(app):
+    if not app.paused:
+        app.send = [str(app.playerGhost.dir),
+                    str(app.playerGhost.center)]
+        app.received = (app.network.
+        send(";".join(app.send)).split(";"))
+        if app.received != ['0']:
+            print(repr(app.received))
+            ghostMulti_unpackReceived(app, app.received)
+        app.pacmanImg = app.pacman.getImg()
+        app.pacman.move()
+        for i in range(len(app.ghosts)):
+            app.ghostImgs[i] = app.ghosts[i].getImg()
+            app.ghosts[i].nextSprite()
+            app.ghosts[i].move()
+            if (app.pacman.pos == app.ghosts[i].pos):
+                if app.powered:
+                    app.ghosts[i].reset()
+                    app.score += 50
+                else:
+                    #time.sleep(3)
+                    app.mode = "endScreen"
+        # app.pacman.nextSprite()
+        if (app.board[app.pacman.pos[0]][app.pacman.pos[1]] == " "):
+            app.score += 1
+            app.board[app.pacman.pos[0]][app.pacman.pos[1]] = "O"
+        elif (app.board[app.pacman.pos[0]][app.pacman.pos[1]] == "P"):
+            app.score += 10
+            app.board[app.pacman.pos[0]][app.pacman.pos[1]] = "O"
+            app.powered = True
+            app.poweredTime = time.time()
+        if time.time() > 7 + app.poweredTime:
+            app.powered = False
+    else:
+        data = app.network.send("Ready?")
+        if data == "True":
+            app.paused = False
+        else:
+            print(data)
+
+def ghostMulti_unpackReceived(app, received):
+    print("UNPACKING\n")
+    print(repr(received))
+    app.pacman.dir = eval(received[0])
+    print(repr(received[0]))
+    app.pacman.center = eval(received[1])
+    app.ghosts[0].center = eval(received[2])
+    app.ghosts[1].center = eval(received[3])
+    app.ghosts[2].center = eval(received[4])
+    app.score = eval(received[5])
+
+def ghostMulti_getCenter(app, pos):
+    cellWidth = app.width/21
+    return ((pos[1]-0.5) * cellWidth, (pos[0] - 0.5) * cellWidth)
+
+def ghostMulti_redrawAll(app, canvas):
+    canvas.create_rectangle(-10, -10, app.width + 10,
+                            app.height + 10, fill="black")
+    canvas.create_image(
+        0, 0, image=ImageTk.PhotoImage(app.background), anchor="nw")
+    ghostMulti_drawDots(app, canvas)
+    # drawPacman
+    x, y = app.pacman.center
+    canvas.create_image(x, y, image=ImageTk.PhotoImage(
+        app.pacmanImg), anchor="c")
+    ghostMulti_drawGhosts(app, canvas)
+    canvas.create_image(
+        app.width/2, 757, image=ImageTk.PhotoImage(app.title), anchor="n")
+    canvas.create_text(
+        app.width/2, 910, text=f"Score: {app.score}", fill="white",
+        font="Fixedsys 36 bold")
+
+def ghostMulti_drawDots(app, canvas):
+    for row in range(len(app.board)):
+        for col in range(len(app.board[row])):
+            if (app.board[row][col] == " "):
+                canvas.create_rectangle(
+                    5 + (24 * col), 5 + (24 * row), 13 + (24 * col),
+                    13 + (24 * row), fill="white")
+            elif (app.board[row][col] == "P"):
+                canvas.create_oval(-1 + (24 * col), -1 + (24 * row),
+                                   23 +  (24 * col), 23 +  (24 * row),
+                                   fill="white", width=0)
+            else:
+                canvas.create_rectangle(
+                    5 + (24 * col), 5 + (24 * row), 13 + (24 * col),
+                    13 + (24 * row), fill="black")
+
+def ghostMulti_drawGhosts(app, canvas):
     for i in range(len(app.ghosts)):
         x, y = app.ghosts[i].center
         canvas.create_image(x, y, image=ImageTk.PhotoImage(
@@ -190,7 +437,7 @@ def endScreen_redrawAll(app, canvas):
             i += 1
         if app.score in app.scores and app.scores[app.score] == date.today().strftime("%B %d, %Y"):
             canvas.create_text(app.width/2, 2 * app.height/3,
-                            text = "NEW HIGHSCORE", font="Fixedsys 48",
+                            text = "NEW HIGHSCORE", font="Fixedsys 36",
                             fill = 'white', anchor = "n")
 
     else:
@@ -218,4 +465,4 @@ def addScore(app):
 
 ##############################################################################
 
-runApp(width=579, height=940)
+runApp(width=500, height=850)

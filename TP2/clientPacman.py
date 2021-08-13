@@ -91,7 +91,7 @@ def gameScreen_timerFired(app):
     if not app.paused:
         app.send = [str(app.pacman.dir), str(app.pacman.center),
                     str(app.ghosts[0].center),str(app.ghosts[1].center),
-                    str(app.ghosts[2].center)]
+                    str(app.ghosts[2].center), app.score]
         data = (app.network.
         send(";".join(app.send)))
         app.playerGhost.dir, center = data.split(";")

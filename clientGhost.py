@@ -135,6 +135,7 @@ def unpackReceived(app, received):
     app.ghosts[0].center = eval(received[2])
     app.ghosts[1].center = eval(received[3])
     app.ghosts[2].center = eval(received[4])
+    app.score = eval(received[5])
 
 def getCenter(app, pos):
     cellWidth = app.width/21
