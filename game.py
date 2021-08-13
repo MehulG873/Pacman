@@ -414,6 +414,7 @@ def ghostMulti_drawGhosts(app, canvas):
 
 ##############################################################################
 def endScreen_keyPressed(app, event):
+    app.scores = None
     convertScores(app)
     addScore(app)
 def endScreen_redrawAll(app, canvas):
@@ -436,7 +437,7 @@ def endScreen_redrawAll(app, canvas):
                             text = line, font="Fixedsys 24",
                             fill = 'white', anchor = "n")
             i += 1
-        if app.score in app.scores and app.scores[app.score] == date.today().strftime("%B %d, %Y"):
+        if app.isHighScore:
             canvas.create_text(app.width/2, 2 * app.height/3,
                             text = "NEW HIGHSCORE", font="Fixedsys 30",
                             fill = 'white', anchor = "n")
@@ -453,16 +454,25 @@ def convertScores(app):
 def addScore(app):
     #Line 194 date module from https://www.programiz.com/python-programming/datetime/current-datetime 
     app.scores[app.score] = date.today().strftime("%B %d, %Y")
+    print(app.scores)
     bestScores = []
+    app.isHighScore = True
+    print(app.scores)
     for key in app.scores:
         bestScores.append(key)
-        while len(bestScores) > 3:
-            bestScores.remove(min(bestScores))
-    print(bestScores)
+    print(app.scores)
+    while len(bestScores) > 3:
+        if (min(bestScores) == app.score):
+            app.isHighScore = False
+        else:
+            app.isHighScore = True
+        bestScores.remove(min(bestScores))
+    #print(bestScores)
+    print(app.scores)
     bestScores.sort(reverse = True)
     scoresFile = open("scores.txt", "w")
     for score in bestScores:
-        scoresFile.write(f"{score}: {app.scores[app.score]}\n")
+        scoresFile.write(f"{score}: {app.scores[score]}\n")
 
 ##############################################################################
 

@@ -37,7 +37,7 @@ def threaded_client(conn, player):
     if player == 1:     
         conn.send(str(0).encode())
         while True:
-            data = (conn.recv(128).decode())
+            data = (conn.recv(256).decode())
             if data == "Ready":
                 pacmanReady = True
                 conn.send("ok".encode())

@@ -31,7 +31,7 @@ class network:
             print(e)
         return self.receive()
     def receive(self):
-        data = self.client.recv(128).decode()
+        data = self.client.recv(256).decode()
         print(data)
         return data
 
