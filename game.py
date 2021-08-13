@@ -507,7 +507,7 @@ def endScreen_redrawAll(app, canvas):
     canvas.create_image(
         app.width/2, 0, image=ImageTk.PhotoImage(app.title), anchor="n")
     canvas.create_text(app.width/2, app.height/5, text="Game Over!",
-                       font="Fixedsys 96 bold", fill="white")
+                       font="Fixedsys 84 bold", fill="white")
     if (app.scores != None):
         canvas.create_text(app.width/2, app.height/3, text=f"Score: {app.score}",
                            font="Fixedsys 30 bold", fill="white")
