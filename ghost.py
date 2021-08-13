@@ -147,7 +147,8 @@ class basicGhost(Ghost):
                     else:
                         possibleDirections.append(3)
             if (possibleDirections == []):
-                return random.randint(0, 3)
+                self.changeDir(random.randint(0, 3))
+                return None
             possibleMoves = dict()
             for direction in possibleDirections:
                 distanceToPacman = 0

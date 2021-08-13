@@ -1,3 +1,5 @@
+#Does all graph related work for A* and Dijkstra code
+
 import sys
 import copy
 class Node(object):

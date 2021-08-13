@@ -1,3 +1,5 @@
+# Creates and hold the Pacman Object
+
 from cmu_112_graphics import *
 from PIL import Image
 import time

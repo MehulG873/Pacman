@@ -1,10 +1,10 @@
 # Project: Pacman
 # AndrewUserId: mehulg
-# Date of Submission: 8/8
+# Date of Submission: 8/13
 # Citations for Image: https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/d9d15482-3751-4b54-b440-93e9202b1c0d/dd7nvab-b2c3ca91-dca6-49e6-b80b-2ce27b20a267.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2Q5ZDE1NDgyLTM3NTEtNGI1NC1iNDQwLTkzZTkyMDJiMWMwZFwvZGQ3bnZhYi1iMmMzY2E5MS1kY2E2LTQ5ZTYtYjgwYi0yY2UyN2IyMGEyNjcucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.1kR9_NEBtyfezx61LNG4PC6SaE3SshPhp_8UmTh49CM
 # Citations for plyaing music. Music Library: https://www.sounds-resource.com/arcade/pacman/sound/10603/
 # Playing Music Tutorial: https://pythonprogramming.net/adding-sounds-music-pygame/
-
+# This is the main file that is meant to be run
 
 ###############################################################################
 from cmu_112_graphics import *
@@ -14,6 +14,8 @@ import time
 from datetime import date
 import network
 import pygame
+
+# Starts the entire app
 
 
 def appStarted(app):
@@ -77,7 +79,7 @@ def appStarted(app):
                  ]
     app.poweredTime = time.time()
     app.background = app.  scaleImage(app.loadImage(
-        'SpriteSheet.png').crop((370, 3, 530, 216)), 3)
+        'SpriteSheet.png').crop((370, 3, 535, 216)), 3)
     app.dot = app.scaleImage(app.loadImage(
         'SpriteSheet.png').crop((3, 81, 5, 83)), 3)
     app.blank = app.scaleImage(app.loadImage(
@@ -507,7 +509,7 @@ def endScreen_redrawAll(app, canvas):
     canvas.create_image(
         app.width/2, 0, image=ImageTk.PhotoImage(app.title), anchor="n")
     canvas.create_text(app.width/2, app.height/5, text="Game Over!",
-                       font="Fixedsys 84 bold", fill="white")
+                       font="Fixedsys 80 bold", fill="white")
     if (app.scores != None):
         canvas.create_text(app.width/2, app.height/3, text=f"Score: {app.score}",
                            font="Fixedsys 30 bold", fill="white")
