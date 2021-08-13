@@ -276,9 +276,9 @@ def pacmanMulti_redrawAll(app, canvas):
         app.pacmanImg), anchor="c")
     pacmanMulti_drawGhosts(app, canvas)
     canvas.create_image(
-        app.width/2, 757, image=ImageTk.PhotoImage(app.title), anchor="n")
+        app.width/2, 650, image=ImageTk.PhotoImage(app.title), anchor="n")
     canvas.create_text(
-        app.width/2, 910, text=f"Score: {app.score}", fill="white",
+        app.width/2, 800, text=f"Score: {app.score}", fill="white",
         font="Fixedsys 30 bold")
 
 def pacmanMulti_drawDots(app, canvas):
@@ -384,9 +384,9 @@ def ghostMulti_redrawAll(app, canvas):
         app.pacmanImg), anchor="c")
     ghostMulti_drawGhosts(app, canvas)
     canvas.create_image(
-        app.width/2, 757, image=ImageTk.PhotoImage(app.title), anchor="n")
+        app.width/2, 650, image=ImageTk.PhotoImage(app.title), anchor="n")
     canvas.create_text(
-        app.width/2, 910, text=f"Score: {app.score}", fill="white",
+        app.width/2, 800, text=f"Score: {app.score}", fill="white",
         font="Fixedsys 30 bold")
 
 def ghostMulti_drawDots(app, canvas):
