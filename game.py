@@ -98,7 +98,7 @@ def homeScreen_mousePressed(app, event):
                 app.ghostImgs.append(ghost.getImg())
             app.network = network.network()
             app.playerGhost.dir = app.network.getOtherDir()
-            app.send = [str(app.pacman.dir), str(app.pacman.center)]
+            app.send = [app.pacman.dir, app.pacman.center]
             app.mode = 'pacmanMulti' 
         elif (600 < event.y < 700):
             app.playerGhost = playerGhost(app, (13, 7), 3)
@@ -221,9 +221,10 @@ def pacmanMulti_timerFired(app):
     if not app.paused:
         app.send = [str(app.pacman.dir), str(app.pacman.center),
                     str(app.ghosts[0].center),str(app.ghosts[1].center),
-                    str(app.ghosts[2].center), app.score]
+                    str(app.ghosts[2].center), str(app.score)]
         data = (app.network.
         send(";".join(app.send)))
+        print(f"Data = {data}")
         app.playerGhost.dir, center = data.split(";")
         print(app.playerGhost.dir)
         app.playerGhost.dir = eval(app.playerGhost.dir)
